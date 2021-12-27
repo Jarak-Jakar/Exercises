@@ -1,0 +1,6 @@
+[submodule "Textbooks/Modern_Fortran_2021/listings"]
+	path = Textbooks/Modern_Fortran_2021/listings
+	url = https://github.com/modern-fortran/listings.git
+[submodule "Textbooks/Modern_Fortran_2021/tsunami"]
+	path = Textbooks/Modern_Fortran_2021/tsunami
+	url = https://github.com/modern-fortran/tsunami.git
