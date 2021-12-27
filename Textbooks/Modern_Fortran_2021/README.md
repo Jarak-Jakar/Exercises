@@ -1,0 +1,1 @@
+Exercises from Modern Fortran by Curcic, published 2021 by Manning.
