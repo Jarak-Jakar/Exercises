@@ -1,3 +1,9 @@
+/*
+
+This implementation differs from Bob Nystrom's in at least one important way:  He only uses a Node type, whereas  I introduce both Node and DoublyLinkedList types.  In theory, at least, consumers of  the list only ever work with the list directly, and never  have to consider the Node type itself.
+
+*/
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,7 +13,7 @@ typedef struct Node
 {
     struct Node *Next;
     struct Node *Prev;
-    char *String;
+    char *Value;
 } Node;
 
 typedef struct DoublyLinkedList
@@ -21,7 +27,7 @@ DoublyLinkedList *New(char *initialStr)
     Node *frontNode = calloc(1, sizeof(Node));
     frontNode->Next = NULL;
     frontNode->Prev = NULL;
-    frontNode->String = initialStr;
+    frontNode->Value = initialStr;
 
     DoublyLinkedList *ptr = calloc(1, sizeof(DoublyLinkedList));
     ptr->Front = frontNode;
@@ -36,7 +42,7 @@ void Append(DoublyLinkedList *list, char *string)
     Node *newNode = calloc(1, (sizeof(Node)));
     newNode->Next = NULL;
     newNode->Prev = backNode;
-    newNode->String = string;
+    newNode->Value = string;
     backNode->Next = newNode;
     list->Back = newNode;
 }
@@ -47,7 +53,7 @@ void Prepend(DoublyLinkedList *list, char *string)
     Node *newNode = calloc(1, sizeof(Node));
     newNode->Next = frontNode;
     newNode->Prev = NULL;
-    newNode->String = string;
+    newNode->Value = string;
     frontNode->Prev = newNode;
     list->Front = newNode;
 }
@@ -58,7 +64,7 @@ void PrintStringsForward(DoublyLinkedList *list)
     Node *node = list->Front;
     while (node != NULL)
     {
-        printf("%s ", node->String);
+        printf("%s ", node->Value);
         node = node->Next;
     }
     printf("\n");
@@ -70,7 +76,7 @@ void PrintStringsBackward(DoublyLinkedList *list)
     Node *node = list->Back;
     while (node != NULL)
     {
-        printf("%s ", node->String);
+        printf("%s ", node->Value);
         node = node->Prev;
     }
     printf("\n");
@@ -88,7 +94,7 @@ bool InsertAt(DoublyLinkedList *list, char *string, int index)
     }
 
     Node *node = list->Front;
-    int idx = 1;
+    int idx = 0;
 
     while (node != NULL)
     {
@@ -99,41 +105,67 @@ bool InsertAt(DoublyLinkedList *list, char *string, int index)
         }
         else
         {
-            // This is final node
-            if (node->Next == NULL)
-            {
-                Append(list, string);
-            }
-            else
-            {
-
-                Node *newNode = calloc(1, sizeof(Node));
-                newNode->Next = node->Next;
-                newNode->Prev = node;
-                newNode->String = string;
-                node->Next = newNode;
-            }
+            Node *newNode = calloc(1, sizeof(Node));
+            newNode->Next = node;
+            newNode->Prev = node->Prev;
+            newNode->Value = string;
+            node->Prev = newNode;
+            newNode->Prev->Next = newNode;
             return true;
         }
+    }
+
+    // This is final node
+    if (idx == index)
+    {
+        Append(list, string);
     }
 
     // Otherwise, insertion failed
     return false;
 }
 
+// Returns true or false depending on whether the given element was found.  Does NOT change passed in string/pointer if the element is not found.
+bool GetAt(DoublyLinkedList *list, int index, char **ptr)
+{
+    int idx = 0;
+    Node *node = list->Front;
+
+    while (idx < index && node != NULL)
+    {
+        idx++;
+        node = node->Next;
+    }
+
+    if (node != NULL)
+    {
+        *ptr = node->Value;
+        return true;
+    }
+
+    return false;
+}
+
 int main()
 {
-    DoublyLinkedList *dll = New("Hello");
-    PrintStringsForward(dll);
-    Append(dll, "there");
+    DoublyLinkedList *dll = New("there");
     PrintStringsForward(dll);
     Append(dll, "children!");
+    PrintStringsForward(dll);
+    Prepend(dll, "Hello");
     PrintStringsForward(dll);
     PrintStringsBackward(dll);
 
     InsertAt(dll, "rambunctious", 2);
     PrintStringsForward(dll);
 
-    printf("%s\n", dll->Front->String);
-    printf("%s\n", dll->Back->String);
+    printf("%s\n", dll->Front->Value);
+    printf("%s\n", dll->Back->Value);
+
+    PrintStringsBackward(dll);
+    PrintStringsForward(dll);
+
+    char *str = NULL;
+    GetAt(dll, 2, &str);
+    printf("%s\n", str);
 }
