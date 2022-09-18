@@ -89,7 +89,6 @@ bool InsertAt(DoublyLinkedList *list, char *string, int index)
 
     Node *node = list->Front;
     int idx = 1;
-    bool success = false;
 
     while (node != NULL)
     {
@@ -100,17 +99,26 @@ bool InsertAt(DoublyLinkedList *list, char *string, int index)
         }
         else
         {
-            Node *newNode = calloc(1, sizeof(Node));
-            newNode->Next = node->Next;
-            newNode->Prev = node;
-            newNode->String = string;
-            node->Next = newNode;
-            success = true;
-            break;
+            // This is final node
+            if (node->Next == NULL)
+            {
+                Append(list, string);
+            }
+            else
+            {
+
+                Node *newNode = calloc(1, sizeof(Node));
+                newNode->Next = node->Next;
+                newNode->Prev = node;
+                newNode->String = string;
+                node->Next = newNode;
+            }
+            return true;
         }
     }
 
-    return success;
+    // Otherwise, insertion failed
+    return false;
 }
 
 int main()
@@ -123,6 +131,9 @@ int main()
     PrintStringsForward(dll);
     PrintStringsBackward(dll);
 
-    InsertAt(dll, "rambunctious", 1);
+    InsertAt(dll, "rambunctious", 2);
     PrintStringsForward(dll);
+
+    printf("%s\n", dll->Front->String);
+    printf("%s\n", dll->Back->String);
 }
