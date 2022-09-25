@@ -13,4 +13,4 @@ Mustache templates
 SASS/SCSS files
 
 
-[I later checked the provided answers, and it looks like things might have changed in the intervening years, so his Nystrom's answers are not necessarily comparable to mine]
+[I later checked the provided answers, and it looks like things might have changed in the intervening years, so Nystrom's answers are not necessarily comparable to mine]

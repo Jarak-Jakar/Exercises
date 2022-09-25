@@ -146,6 +146,42 @@ bool GetAt(DoublyLinkedList *list, int index, char **ptr)
     return false;
 }
 
+void DeleteList(DoublyLinkedList *list) {
+    Node *node = list->Front;
+    Node *nextNode = list->Front;
+
+    while (node != NULL) {
+        nextNode = node.Next;
+        free(node);
+        node = nextNode;
+    }
+
+    free(list);
+}
+
+bool DeleteAt(DoublyLinkedList *list, int index) {
+    int idx = 0;
+    Node  *node = list->Front;
+    while (idx < index && node != NULL) {
+        idx++;
+        node = node->Next;
+    }
+
+    if (node == NULL) {
+        return false;
+    }
+
+    Node *next = node->Next;
+    Node *prev = node->Prev;
+
+    prev->Next = next;
+    next->Prev = prev;
+
+    free(node);
+
+    return true;
+}
+
 int main()
 {
     DoublyLinkedList *dll = New("there");
