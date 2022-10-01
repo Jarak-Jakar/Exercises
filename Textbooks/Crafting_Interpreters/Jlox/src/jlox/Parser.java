@@ -5,11 +5,21 @@ import java.util.List;
 import static jlox.TokenType.*;
 
 public class Parser {
+    private static class ParseError extends RuntimeException {}
+
     private final List<Token> tokens;
     private int current = 0;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
+    }
+
+    Expr parse() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
     }
 
     private Expr expression() {
@@ -34,7 +44,7 @@ public class Parser {
         while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
             Token operator = previous();
             Expr right = term();
-            expr = new Expr.Binary(expr, operator, right;
+            expr = new Expr.Binary(expr, operator, right);
         }
 
         return expr;
@@ -87,6 +97,41 @@ public class Parser {
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
+        }
+
+        throw error(peek(), "Expect expression");
+    }
+
+    private Token consume(TokenType type, String message) {
+        if(check(type)) return advance();
+
+        throw error(peek(), message);
+    }
+
+    private ParseError error(Token token, String message) {
+        Lox.error(token, message);
+        return new ParseError();
+    }
+
+    private void synchronize() {
+        advance();
+
+        while (!isAtEnd()) {
+            if (previous().type == SEMICOLON) return;
+
+            switch (peek().type) {
+                case CLASS:
+                case FUN:
+                case VAR:
+                case FOR:
+                case IF:
+                case WHILE:
+                case PRINT:
+                case RETURN:
+                    return;
+            }
+
+            advance();
         }
     }
 
