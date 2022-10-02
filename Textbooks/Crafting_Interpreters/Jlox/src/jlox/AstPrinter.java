@@ -24,6 +24,11 @@ public class AstPrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitTernaryExpr(Expr.Ternary expr) {
+        return parenthesize("conditional", new Expr.Binary(new Expr.Binary(expr.left, expr.firstOperator, expr.middle), expr.secondOperator, expr.right));
+    }
+
+    @Override
     public String visitGroupingExpr(Expr.Grouping expr) {
         return parenthesize("group", expr.expression);
     }
