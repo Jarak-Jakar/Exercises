@@ -23,7 +23,19 @@ public class Parser {
     }
 
     private Expr expression() {
-        return equality();
+        return comma();
+    }
+
+    private Expr comma() {
+        Expr expr = equality();
+
+        while (match(COMMA)) {
+            Token operator = previous();
+            Expr right = equality();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr equality() {
@@ -136,8 +148,7 @@ public class Parser {
     }
 
     private boolean match(TokenType... types) {
-        for (TokenType type :
-                types) {
+        for (TokenType type : types) {
             if (check(type)) {
                 advance();
                 return true;
