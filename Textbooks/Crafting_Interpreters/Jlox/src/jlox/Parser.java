@@ -23,16 +23,20 @@ public class Parser {
     }
 
     private Expr expression() {
-        return comma();
+        return conditional();
     }
 
-    private Expr comma() {
+    private Expr conditional() {
         Expr expr = equality();
 
-        while (match(COMMA)) {
-            Token operator = previous();
-            Expr right = equality();
-            expr = new Expr.Binary(expr, operator, right);
+        if (match(CONDITIONAL_QUESTION_MARK)) {
+            Token firstOperator = previous();
+            Expr middle = expression();
+            if (match(CONDITIONAL_COLON)) {
+                Token secondOperator = previous();
+                Expr right = equality();
+                expr = new Expr.Ternary(expr, firstOperator, middle, secondOperator, right);
+            }
         }
 
         return expr;
