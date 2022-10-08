@@ -84,12 +84,6 @@ public class Scanner {
             case '*':
                 addToken(STAR);
                 break;
-            case '?':
-                addToken(CONDITIONAL_QUESTION_MARK);
-                break;
-            case ':':
-                addToken(CONDITIONAL_COLON);
-                break;
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
                 break;
