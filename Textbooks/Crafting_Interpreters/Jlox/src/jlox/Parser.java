@@ -23,23 +23,7 @@ public class Parser {
     }
 
     private Expr expression() {
-        return conditional();
-    }
-
-    private Expr conditional() {
-        Expr expr = equality();
-
-        if (match(CONDITIONAL_QUESTION_MARK)) {
-            Token firstOperator = previous();
-            Expr middle = expression();
-            if (match(CONDITIONAL_COLON)) {
-                Token secondOperator = previous();
-                Expr right = equality();
-                expr = new Expr.Ternary(expr, firstOperator, middle, secondOperator, right);
-            }
-        }
-
-        return expr;
+        return equality();
     }
 
     private Expr equality() {
@@ -152,7 +136,8 @@ public class Parser {
     }
 
     private boolean match(TokenType... types) {
-        for (TokenType type : types) {
+        for (TokenType type :
+                types) {
             if (check(type)) {
                 advance();
                 return true;
