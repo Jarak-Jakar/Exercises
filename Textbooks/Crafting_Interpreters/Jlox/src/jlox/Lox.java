@@ -37,6 +37,15 @@ public class Lox {
         }
     }
 
+    private static void runFile(String path) throws IOException {
+        byte[] bytes = Files.readAllBytes(Paths.get(path));
+        run(new String(bytes, Charset.defaultCharset()));
+
+        // Indicate an error in the exit code.
+        if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
+    }
+
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
@@ -53,15 +62,6 @@ public class Lox {
         if (hadError) return;
 
         interpreter.interpret(statements);
-    }
-
-    private static void runFile(String path) throws IOException {
-        byte[] bytes = Files.readAllBytes(Paths.get(path));
-        run(new String(bytes, Charset.defaultCharset()));
-
-        // Indicate an error in the exit code.
-        if (hadError) System.exit(65);
-        if (hadRuntimeError) System.exit(70);
     }
 
     static void error(int line, String message) {
@@ -85,6 +85,7 @@ public class Lox {
         System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
         hadRuntimeError = true;
     }
+
     public static void divisionByZeroError(DivisionByZeroError error) {
         System.err.println(error.getMessage());
         hadRuntimeError = true;
