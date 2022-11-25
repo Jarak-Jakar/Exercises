@@ -7,11 +7,8 @@ import java.util.List;
 import static jlox.TokenType.*;
 
 public class Parser {
-    private static class ParseError extends RuntimeException {}
-
     private final List<Token> tokens;
     private int current = 0;
-
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
@@ -70,7 +67,7 @@ public class Parser {
     }
 
     private Stmt statement() {
-        if (match(FOR)) return  forStatement();
+        if (match(FOR)) return forStatement();
         if (match(IF)) return ifStatement();
         if (match(PRINT)) return printStatement();
         if (match(RETURN)) return returnStatement();
@@ -193,7 +190,7 @@ public class Parser {
             Expr value = assignment();
 
             if (expr instanceof Expr.Variable) {
-                Token name = ((Expr.Variable)expr).name;
+                Token name = ((Expr.Variable) expr).name;
                 return new Expr.Assign(name, value);
             }
 
@@ -320,7 +317,7 @@ public class Parser {
         if (match(TRUE)) return new Expr.Literal(true);
         if (match(NIL)) return new Expr.Literal(null);
 
-        if (match(NUMBER,STRING)) {
+        if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
         }
 
@@ -338,7 +335,7 @@ public class Parser {
     }
 
     private Token consume(TokenType type, String message) {
-        if(check(type)) return advance();
+        if (check(type)) return advance();
 
         throw error(peek(), message);
     }
@@ -401,5 +398,8 @@ public class Parser {
     private boolean check(TokenType type) {
         if (isAtEnd()) return false;
         return peek().type == type;
+    }
+
+    private static class ParseError extends RuntimeException {
     }
 }

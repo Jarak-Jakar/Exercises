@@ -1,6 +1,9 @@
 package jlox;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
@@ -11,64 +14,24 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         this.interpreter = interpreter;
     }
 
-    private enum FunctionType {
-        NONE,
-        FUNCTION
-    }
-
-    public void resolve(List<Stmt> statements) {
-        for (Stmt statement :
-                statements) {
-            resolve(statement);
-        }
-    }
-
-    private void resolve(Stmt stmt) {
-        stmt.accept(this);
+    @Override
+    public Void visitAssignExpr(Expr.Assign expr) {
+        resolve(expr.value);
+        resolveLocal(expr, expr.name);
+        return null;
     }
 
     private void resolve(Expr expr) {
         expr.accept(this);
     }
 
-    private void beginScope() {
-        scopes.push(new HashMap<String, Boolean>());
-    }
-
-    private void endScope() {
-        scopes.pop();
-    }
-
-    private void define(Token name) {
-        if (scopes.isEmpty())return;
-        scopes.peek().put(name.lexeme, true);
-    }
-
-    private void declare(Token name) {
-        if (scopes.isEmpty()) return;
-
-        Map<String, Boolean> scope = scopes.peek();
-        if (scope.containsKey(name.lexeme)) {
-            Lox.error(name, "Already a variable with this name in this scope.");
-        }
-
-        scope.put(name.lexeme, false);
-    }
-
     private void resolveLocal(Expr expr, Token name) {
-        for (int i = scopes.size() - 1; i >= 0 ; i--) {
-            if (scopes.get(i).containsKey(name.lexeme)){
+        for (int i = scopes.size() - 1; i >= 0; i--) {
+            if (scopes.get(i).containsKey(name.lexeme)) {
                 interpreter.resolve(expr, scopes.size() - 1 - i);
                 return;
             }
         }
-    }
-
-    @Override
-    public Void visitAssignExpr(Expr.Assign expr) {
-        resolve(expr.value);
-        resolveLocal(expr, expr.name);
-        return null;
     }
 
     @Override
@@ -131,6 +94,25 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         return null;
     }
 
+    public void resolve(List<Stmt> statements) {
+        for (Stmt statement :
+                statements) {
+            resolve(statement);
+        }
+    }
+
+    private void resolve(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    private void beginScope() {
+        scopes.push(new HashMap<String, Boolean>());
+    }
+
+    private void endScope() {
+        scopes.pop();
+    }
+
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         resolve(stmt.expression);
@@ -144,6 +126,22 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
+    }
+
+    private void define(Token name) {
+        if (scopes.isEmpty()) return;
+        scopes.peek().put(name.lexeme, true);
+    }
+
+    private void declare(Token name) {
+        if (scopes.isEmpty()) return;
+
+        Map<String, Boolean> scope = scopes.peek();
+        if (scope.containsKey(name.lexeme)) {
+            Lox.error(name, "Already a variable with this name in this scope.");
+        }
+
+        scope.put(name.lexeme, false);
     }
 
     private void resolveFunction(Stmt.Function function, FunctionType type) {
@@ -203,5 +201,10 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolve(stmt.condition);
         resolve(stmt.body);
         return null;
+    }
+
+    private enum FunctionType {
+        NONE,
+        FUNCTION
     }
 }
