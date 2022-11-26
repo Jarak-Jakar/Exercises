@@ -111,6 +111,13 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitClassStmt(Stmt.Class stmt) {
         declare(stmt.name);
         define(stmt.name);
+
+        for (Stmt.Function method :
+                stmt.methods) {
+            FunctionType declaration = FunctionType.METHOD;
+            resolveFunction(method, declaration);
+        }
+
         return null;
     }
 
@@ -127,21 +134,6 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
-    }
-
-    private void resolveFunction(Stmt.Function function, FunctionType type) {
-        FunctionType enclosingFunction = currentFunction;
-        currentFunction = type;
-
-        beginScope();
-        for (Token param :
-                function.params) {
-            declare(param);
-            define(param);
-        }
-        resolve(function.body);
-        endScope();
-        currentFunction = enclosingFunction;
     }
 
     @Override
@@ -188,6 +180,21 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         return null;
     }
 
+    private void resolveFunction(Stmt.Function function, FunctionType type) {
+        FunctionType enclosingFunction = currentFunction;
+        currentFunction = type;
+
+        beginScope();
+        for (Token param :
+                function.params) {
+            declare(param);
+            define(param);
+        }
+        resolve(function.body);
+        endScope();
+        currentFunction = enclosingFunction;
+    }
+
     private void define(Token name) {
         if (scopes.isEmpty()) return;
         scopes.peek().put(name.lexeme, true);
@@ -225,6 +232,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     private enum FunctionType {
         NONE,
+        METHOD,
         FUNCTION
     }
 }
