@@ -94,23 +94,11 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         return null;
     }
 
-    public void resolve(List<Stmt> statements) {
-        for (Stmt statement :
-                statements) {
-            resolve(statement);
-        }
-    }
-
-    private void resolve(Stmt stmt) {
-        stmt.accept(this);
-    }
-
-    private void beginScope() {
-        scopes.push(new HashMap<String, Boolean>());
-    }
-
-    private void endScope() {
-        scopes.pop();
+    @Override
+    public Void visitClassStmt(Stmt.Class stmt) {
+        declare(stmt.name);
+        define(stmt.name);
+        return null;
     }
 
     @Override
@@ -126,22 +114,6 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
-    }
-
-    private void define(Token name) {
-        if (scopes.isEmpty()) return;
-        scopes.peek().put(name.lexeme, true);
-    }
-
-    private void declare(Token name) {
-        if (scopes.isEmpty()) return;
-
-        Map<String, Boolean> scope = scopes.peek();
-        if (scope.containsKey(name.lexeme)) {
-            Lox.error(name, "Already a variable with this name in this scope.");
-        }
-
-        scope.put(name.lexeme, false);
     }
 
     private void resolveFunction(Stmt.Function function, FunctionType type) {
@@ -201,6 +173,41 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolve(stmt.condition);
         resolve(stmt.body);
         return null;
+    }
+
+    private void define(Token name) {
+        if (scopes.isEmpty()) return;
+        scopes.peek().put(name.lexeme, true);
+    }
+
+    private void declare(Token name) {
+        if (scopes.isEmpty()) return;
+
+        Map<String, Boolean> scope = scopes.peek();
+        if (scope.containsKey(name.lexeme)) {
+            Lox.error(name, "Already a variable with this name in this scope.");
+        }
+
+        scope.put(name.lexeme, false);
+    }
+
+    public void resolve(List<Stmt> statements) {
+        for (Stmt statement :
+                statements) {
+            resolve(statement);
+        }
+    }
+
+    private void resolve(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    private void beginScope() {
+        scopes.push(new HashMap<String, Boolean>());
+    }
+
+    private void endScope() {
+        scopes.pop();
     }
 
     private enum FunctionType {
