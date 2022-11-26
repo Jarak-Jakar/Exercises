@@ -8,7 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Lox {
+public enum Lox {
+    ;
     private static final Interpreter interpreter = new Interpreter();
     private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
@@ -28,7 +29,7 @@ public class Lox {
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
-        for (; ; ) {
+        while (true) {
             System.out.print("> ");
             String line = reader.readLine();
             if (line == null) break;
@@ -81,7 +82,7 @@ public class Lox {
         }
     }
 
-    public static void runtimeError(RuntimeError error) {
+    static void runtimeError(RuntimeError error) {
         System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
         hadRuntimeError = true;
     }

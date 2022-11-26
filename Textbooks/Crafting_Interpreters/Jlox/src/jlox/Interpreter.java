@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    final Environment globals = new Environment();
+    private final Environment globals = new Environment();
     private final Map<Expr, Integer> locals = new HashMap<>();
     private Environment environment = globals;
 
@@ -19,7 +19,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
             @Override
             public Object call(Interpreter interpreter, List<Object> arguments) {
-                return (double) System.currentTimeMillis() / 1000.0;
+                return System.currentTimeMillis() / 1_000.0;
             }
 
             @Override
@@ -199,7 +199,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return lookupVariable(expr.name, expr);
     }
 
-    private void checkNumberOperand(Token operator, Object operand) {
+    private static void checkNumberOperand(Token operator, Object operand) {
         if (operand instanceof Double) return;
         throw new RuntimeError(operator, "Operand must be a number");
     }
@@ -213,26 +213,26 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
     }
 
-    private boolean isTruthy(Object object) {
+    private static boolean isTruthy(Object object) {
         if (object == null) return false;
         if (object instanceof Boolean) return (boolean) object;
         return true;
     }
 
-    private void checkNumberOperands(Token operator, Object left, Object right) {
+    private static void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Double && right instanceof Double) return;
 
         throw new RuntimeError(operator, "Operands must be numbers.");
     }
 
-    private boolean isEqual(Object a, Object b) {
-        if (a == null && b == null) return true;
-        if (a == null) return false;
+    private static boolean isEqual(Object left, Object right) {
+        if (left == null && right == null) return true;
+        if (left == null) return false;
 
-        return a.equals(b);
+        return left.equals(right);
     }
 
-    private String stringify(Object object) {
+    private static String stringify(Object object) {
         if (object == null) return "nil";
 
         if (object instanceof Double) {
@@ -250,7 +250,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return expr.accept(this);
     }
 
-    void interpret(List<Stmt> statements) {
+    void interpret(Iterable<? extends Stmt> statements) {
         try {
             for (Stmt statement : statements) {
                 execute(statement);
@@ -290,7 +290,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Map<String, LoxFunction> methods = new HashMap<>();
         for (Stmt.Function method :
                 stmt.methods) {
-            LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.equals("init"));
+            LoxFunction function = new LoxFunction(method, environment, "init".equals(method.name.lexeme));
             methods.put(method.name.lexeme, function);
         }
 
@@ -361,7 +361,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return null;
     }
 
-    public void executeBlock(List<Stmt> statements, Environment environment) {
+    void executeBlock(Iterable<? extends Stmt> statements, Environment environment) {
         Environment previous = this.environment;
         try {
             this.environment = environment;
@@ -374,7 +374,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
     }
 
-    public void resolve(Expr expr, int depth) {
+    void resolve(Expr expr, int depth) {
         locals.put(expr, depth);
     }
 }

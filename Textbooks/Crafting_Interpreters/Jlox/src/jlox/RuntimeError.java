@@ -1,9 +1,9 @@
 package jlox;
 
-public class RuntimeError extends RuntimeException {
+class RuntimeError extends RuntimeException {
     final Token token;
 
-    public RuntimeError(Token token, String message) {
+    RuntimeError(Token token, String message) {
         super(message);
         this.token = token;
     }

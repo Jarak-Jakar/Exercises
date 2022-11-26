@@ -5,7 +5,7 @@ import java.util.List;
 public class LoxFunction implements LoxCallable {
     private final Stmt.Function declaration;
     private final Environment closure;
-    private boolean isInitializer;
+    private final boolean isInitializer;
 
 
     LoxFunction(Stmt.Function declaration, Environment closure, boolean isInitializer) {
@@ -43,7 +43,7 @@ public class LoxFunction implements LoxCallable {
         return null;
     }
 
-    public LoxFunction bind(LoxInstance instance) {
+    LoxFunction bind(LoxInstance instance) {
         Environment environment = new Environment(closure);
         environment.define("this", instance);
         return new LoxFunction(declaration, environment, isInitializer);

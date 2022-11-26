@@ -2,12 +2,13 @@ package jlox;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Environment {
+class Environment {
     final Environment enclosing;
     private final Map<String, Object> values = new HashMap<>();
 
-    public Environment() {
+    Environment() {
         enclosing = null;
     }
 
@@ -29,7 +30,7 @@ public class Environment {
         values.put(name, value);
     }
 
-    public void assign(Token name, Object value) {
+    void assign(Token name, Object value) {
         if (values.containsKey(name.lexeme)) {
             values.put(name.lexeme, value);
             return;
@@ -43,19 +44,19 @@ public class Environment {
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
 
-    public Object getAt(int distance, String name) {
+    Object getAt(int distance, String name) {
         return ancestor(distance).values.get(name);
     }
 
     private Environment ancestor(int distance) {
         Environment environment = this;
         for (int i = 0; i < distance; i++) {
-            environment = environment.enclosing;
+            environment = Objects.requireNonNull(environment).enclosing;
         }
         return environment;
     }
 
-    public void assignAt(int distance, Token name, Object value) {
+    void assignAt(int distance, Token name, Object value) {
         ancestor(distance).values.put(name.lexeme, value);
     }
 }
