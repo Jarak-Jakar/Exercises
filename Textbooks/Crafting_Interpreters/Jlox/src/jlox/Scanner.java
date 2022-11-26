@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static jlox.TokenType.*;
 
-public class Scanner {
+class Scanner {
     private static final Map<String, TokenType> keywords;
 
     static {
@@ -39,6 +39,18 @@ public class Scanner {
 
     Scanner(String source) {
         this.source = source;
+    }
+
+    private static boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    }
+
+    private static boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    private static boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     List<Token> scanTokens() {
@@ -137,10 +149,6 @@ public class Scanner {
         }
     }
 
-    private boolean isAlpha(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-    }
-
     private void identifier() {
         while (isAlphaNumeric(peek())) advance();
 
@@ -148,10 +156,6 @@ public class Scanner {
         TokenType type = keywords.get(text);
         if (type == null) type = IDENTIFIER;
         addToken(type);
-    }
-
-    private boolean isAlphaNumeric(char c) {
-        return isAlpha(c) || isDigit(c);
     }
 
     private void number() {
@@ -171,10 +175,6 @@ public class Scanner {
     private char peekNext() {
         if (current + 1 >= source.length()) return '\0';
         return source.charAt(current + 1);
-    }
-
-    private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
     }
 
     private void string() {
@@ -219,7 +219,9 @@ public class Scanner {
     }
 
     private char advance() {
-        return source.charAt(current++);
+        char c = source.charAt(current);
+        current++;
+        return c;
     }
 
     private boolean isAtEnd() {

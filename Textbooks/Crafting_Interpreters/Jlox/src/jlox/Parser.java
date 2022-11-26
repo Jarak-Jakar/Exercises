@@ -6,12 +6,19 @@ import java.util.List;
 
 import static jlox.TokenType.*;
 
-public class Parser {
-    private final List<Token> tokens;
+class Parser {
+    private static final int MAX_PARAMETERS = 255;
+    private static final String FUNCTION = "function";
+    private final List<? extends Token> tokens;
     private int current = 0;
 
-    public Parser(List<Token> tokens) {
+    Parser(List<? extends Token> tokens) {
         this.tokens = tokens;
+    }
+
+    private static ParseError error(Token token, String message) {
+        Lox.error(token, message);
+        return new ParseError();
     }
 
     List<Stmt> parse() {
@@ -26,7 +33,7 @@ public class Parser {
     private Stmt declaration() {
         try {
             if (match(CLASS)) return classDeclaration();
-            if (match(FUN)) return function("function");
+            if (match(FUN)) return function(FUNCTION);
             if (match(VAR)) return varDeclaration();
 
             return statement();
@@ -63,7 +70,7 @@ public class Parser {
         List<Token> parameters = new ArrayList<>();
         if (!check(RIGHT_PAREN)) {
             do {
-                if (parameters.size() >= 255) {
+                if (parameters.size() >= MAX_PARAMETERS) {
                     error(peek(), "Can't have more than 255 parameters.");
                 }
 
@@ -114,13 +121,13 @@ public class Parser {
     private Stmt forStatement() {
         consume(LEFT_PAREN, "Expect '(' after 'for'.");
 
-        Stmt initialiser;
+        Stmt initializer;
         if (match(SEMICOLON)) {
-            initialiser = null;
+            initializer = null;
         } else if (match(VAR)) {
-            initialiser = varDeclaration();
+            initializer = varDeclaration();
         } else {
-            initialiser = expressionStatement();
+            initializer = expressionStatement();
         }
 
         Expr condition = null;
@@ -145,11 +152,11 @@ public class Parser {
             );
         }
 
-        if (condition == null) condition = new Expr.Literal(true);
+        if (condition == null) condition = new Expr.Literal(Boolean.TRUE);
         body = new Stmt.While(condition, body);
 
-        if (initialiser != null) {
-            body = new Stmt.Block(Arrays.asList(initialiser, body));
+        if (initializer != null) {
+            body = new Stmt.Block(Arrays.asList(initializer, body));
         }
 
         return body;
@@ -197,7 +204,7 @@ public class Parser {
 
     private Stmt printStatement() {
         Expr value = expression();
-        consume(SEMICOLON, "Excpect ';' after value.");
+        consume(SEMICOLON, "Expect ';' after value.");
         return new Stmt.Print(value);
     }
 
@@ -215,8 +222,7 @@ public class Parser {
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable) expr).name;
                 return new Expr.Assign(name, value);
-            } else if (expr instanceof Expr.Get) {
-                Expr.Get get = (Expr.Get) expr;
+            } else if (expr instanceof Expr.Get get) {
                 return new Expr.Set(get.object, get.name, value);
             }
 
@@ -329,7 +335,7 @@ public class Parser {
         List<Expr> arguments = new ArrayList<>();
         if (!check(RIGHT_PAREN)) {
             do {
-                if (arguments.size() >= 255) {
+                if (arguments.size() >= MAX_PARAMETERS) {
                     error(peek(), "Can't have more than 255 arguments");
                 }
                 arguments.add(expression());
@@ -342,8 +348,8 @@ public class Parser {
     }
 
     private Expr primary() {
-        if (match(FALSE)) return new Expr.Literal(false);
-        if (match(TRUE)) return new Expr.Literal(true);
+        if (match(FALSE)) return new Expr.Literal(Boolean.FALSE);
+        if (match(TRUE)) return new Expr.Literal(Boolean.TRUE);
         if (match(NIL)) return new Expr.Literal(null);
 
         if (match(NUMBER, STRING)) {
@@ -376,11 +382,6 @@ public class Parser {
         if (check(type)) return advance();
 
         throw error(peek(), message);
-    }
-
-    private ParseError error(Token token, String message) {
-        Lox.error(token, message);
-        return new ParseError();
     }
 
     private void synchronize() {
