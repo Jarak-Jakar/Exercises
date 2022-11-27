@@ -1,7 +1,0 @@
-Currently, any attempt to divide by zero results in "Infinity".  I believe by the IEEE-754 spec, any attempt to divide a floating point number (of which all Doubles are) by zero becomes "NaN", which gets turned into Infinity...  somewhere.  I thought it was in Lox, but I can't find that anywhere now, so I assume that is Java's typical toString behaviour on any Double in a NaN state.
-
-No, wait, it looks like Java reports division of any non-zero positive number as positive infinity, any non-zero negative number as negative infinity, and division of zero by zero as NaN.  I can't remember if that is the specified behaviour or not, but I would guess it is.
-
-Personally, I think sticking to the IEEE-754 approach is the best idea.  There is no good solution to division by zero, reporting NaN makes as much sense as anything and is relatively well-understood.  You'd probably want to expose a bit more the Java functionality for working with Doubles, though.
-
-Other languages mostly either seem to stick with using the IEEE-754 approach, at least for floating point numbers.  Typically for integers it seems like they go with throwing a DivideByZeroException or something.
