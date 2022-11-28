@@ -166,7 +166,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         endScope();
 
-        if (stmt.superclass != null) endScope();
+        if (stmt.superclass != null) {
+            endScope();
+        }
 
         currentClass = enclosingClass;
         return null;
@@ -191,7 +193,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitIfStmt(Stmt.If stmt) {
         resolve(stmt.condition);
         resolve(stmt.thenBranch);
-        if (stmt.elseBranch != null) resolve(stmt.elseBranch);
+        if (stmt.elseBranch != null) {
+            resolve(stmt.elseBranch);
+        }
         return null;
     }
 
@@ -251,12 +255,16 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     private void define(Token name) {
-        if (scopes.isEmpty()) return;
+        if (scopes.isEmpty()) {
+            return;
+        }
         scopes.peek().put(name.lexeme, true);
     }
 
     private void declare(Token name) {
-        if (scopes.isEmpty()) return;
+        if (scopes.isEmpty()) {
+            return;
+        }
 
         Map<String, Boolean> scope = scopes.peek();
         if (scope.containsKey(name.lexeme)) {

@@ -32,9 +32,15 @@ class Parser {
 
     private Stmt declaration() {
         try {
-            if (match(CLASS)) return classDeclaration();
-            if (match(FUN)) return function(FUNCTION);
-            if (match(VAR)) return varDeclaration();
+            if (match(CLASS)) {
+                return classDeclaration();
+            }
+            if (match(FUN)) {
+                return function(FUNCTION);
+            }
+            if (match(VAR)) {
+                return varDeclaration();
+            }
 
             return statement();
         } catch (ParseError error) {
@@ -97,12 +103,24 @@ class Parser {
     }
 
     private Stmt statement() {
-        if (match(FOR)) return forStatement();
-        if (match(IF)) return ifStatement();
-        if (match(PRINT)) return printStatement();
-        if (match(RETURN)) return returnStatement();
-        if (match(WHILE)) return whileStatement();
-        if (match(LEFT_BRACE)) return new Stmt.Block(block());
+        if (match(FOR)) {
+            return forStatement();
+        }
+        if (match(IF)) {
+            return ifStatement();
+        }
+        if (match(PRINT)) {
+            return printStatement();
+        }
+        if (match(RETURN)) {
+            return returnStatement();
+        }
+        if (match(WHILE)) {
+            return whileStatement();
+        }
+        if (match(LEFT_BRACE)) {
+            return new Stmt.Block(block());
+        }
 
         return expressionStatement();
     }
@@ -152,7 +170,9 @@ class Parser {
             );
         }
 
-        if (condition == null) condition = new Expr.Literal(Boolean.TRUE);
+        if (condition == null) {
+            condition = new Expr.Literal(Boolean.TRUE);
+        }
         body = new Stmt.While(condition, body);
 
         if (initializer != null) {
@@ -348,9 +368,15 @@ class Parser {
     }
 
     private Expr primary() {
-        if (match(FALSE)) return new Expr.Literal(Boolean.FALSE);
-        if (match(TRUE)) return new Expr.Literal(Boolean.TRUE);
-        if (match(NIL)) return new Expr.Literal(null);
+        if (match(FALSE)) {
+            return new Expr.Literal(Boolean.FALSE);
+        }
+        if (match(TRUE)) {
+            return new Expr.Literal(Boolean.TRUE);
+        }
+        if (match(NIL)) {
+            return new Expr.Literal(null);
+        }
 
         if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
@@ -363,7 +389,9 @@ class Parser {
             return new Expr.Super(keyword, method);
         }
 
-        if (match(THIS)) return new Expr.This(previous());
+        if (match(THIS)) {
+            return new Expr.This(previous());
+        }
 
         if (match(IDENTIFIER)) {
             return new Expr.Variable(previous());
@@ -379,7 +407,9 @@ class Parser {
     }
 
     private Token consume(TokenType type, String message) {
-        if (check(type)) return advance();
+        if (check(type)) {
+            return advance();
+        }
 
         throw error(peek(), message);
     }
@@ -388,7 +418,9 @@ class Parser {
         advance();
 
         while (!isAtEnd()) {
-            if (previous().type == SEMICOLON) return;
+            if (previous().type == SEMICOLON) {
+                return;
+            }
 
             switch (peek().type) {
                 case CLASS:
@@ -418,7 +450,9 @@ class Parser {
     }
 
     private Token advance() {
-        if (!isAtEnd()) current++;
+        if (!isAtEnd()) {
+            current++;
+        }
         return previous();
     }
 
@@ -435,7 +469,9 @@ class Parser {
     }
 
     private boolean check(TokenType type) {
-        if (isAtEnd()) return false;
+        if (isAtEnd()) {
+            return false;
+        }
         return peek().type == type;
     }
 

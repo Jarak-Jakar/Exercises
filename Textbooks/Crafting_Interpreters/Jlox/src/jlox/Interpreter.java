@@ -136,9 +136,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object left = evaluate(expr.left);
 
         if (expr.operator.type == TokenType.OR) {
-            if (isTruthy(left)) return left;
+            if (isTruthy(left)) {
+                return left;
+            }
         } else {
-            if (!isTruthy(left)) return left;
+            if (!isTruthy(left)) {
+                return left;
+            }
         }
 
         return evaluate(expr.right);
@@ -200,7 +204,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     private static void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) return;
+        if (operand instanceof Double) {
+            return;
+        }
         throw new RuntimeError(operator, "Operand must be a number");
     }
 
@@ -214,26 +220,38 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     private static boolean isTruthy(Object object) {
-        if (object == null) return false;
-        if (object instanceof Boolean) return (boolean) object;
+        if (object == null) {
+            return false;
+        }
+        if (object instanceof Boolean) {
+            return (boolean) object;
+        }
         return true;
     }
 
     private static void checkNumberOperands(Token operator, Object left, Object right) {
-        if (left instanceof Double && right instanceof Double) return;
+        if (left instanceof Double && right instanceof Double) {
+            return;
+        }
 
         throw new RuntimeError(operator, "Operands must be numbers.");
     }
 
     private static boolean isEqual(Object left, Object right) {
-        if (left == null && right == null) return true;
-        if (left == null) return false;
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null) {
+            return false;
+        }
 
         return left.equals(right);
     }
 
     private static String stringify(Object object) {
-        if (object == null) return "nil";
+        if (object == null) {
+            return "nil";
+        }
 
         if (object instanceof Double) {
             String text = object.toString();
@@ -337,7 +355,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitReturnStmt(Stmt.Return stmt) {
         Object value = null;
-        if (stmt.value != null) value = evaluate(stmt.value);
+        if (stmt.value != null) {
+            value = evaluate(stmt.value);
+        }
 
         throw new Return(value);
     }

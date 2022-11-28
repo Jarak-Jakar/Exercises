@@ -111,7 +111,10 @@ class Scanner {
             case '/':
                 if (match('/')) {
                     // A comment goes until the end of the line.
-                    while (peek() != '\n' && !isAtEnd()) advance();
+                    while (peek() != '\n' && !isAtEnd()) {
+                        advance();
+                    }
+                    
                 } else {
                     addToken(SLASH);
                 }
@@ -150,36 +153,48 @@ class Scanner {
     }
 
     private void identifier() {
-        while (isAlphaNumeric(peek())) advance();
+        while (isAlphaNumeric(peek())) {
+            advance();
+        }
 
         String text = source.substring(start, current);
         TokenType type = keywords.get(text);
-        if (type == null) type = IDENTIFIER;
+        if (type == null) {
+            type = IDENTIFIER;
+        }
         addToken(type);
     }
 
     private void number() {
-        while (isDigit(peek())) advance();
+        while (isDigit(peek())) {
+            advance();
+        }
 
         // Look for a fractional part
         if (peek() == '.' && isDigit(peekNext())) {
             // Consume the "."
             advance();
 
-            while (isDigit(peek())) advance();
+            while (isDigit(peek())) {
+                advance();
+            }
         }
 
         addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
     }
 
     private char peekNext() {
-        if (current + 1 >= source.length()) return '\0';
+        if (current + 1 >= source.length()) {
+            return '\0';
+        }
         return source.charAt(current + 1);
     }
 
     private void string() {
         while (peek() != '"' && !isAtEnd()) {
-            if (peek() == '\n') line++;
+            if (peek() == '\n') {
+                line++;
+            }
             advance();
         }
 
@@ -197,13 +212,19 @@ class Scanner {
     }
 
     private char peek() {
-        if (isAtEnd()) return '\0';
+        if (isAtEnd()) {
+            return '\0';
+        }
         return source.charAt(current);
     }
 
     private boolean match(char expected) {
-        if (isAtEnd()) return false;
-        if (source.charAt(current) != expected) return false;
+        if (isAtEnd()) {
+            return false;
+        }
+        if (source.charAt(current) != expected) {
+            return false;
+        }
 
         current++;
         return true;
