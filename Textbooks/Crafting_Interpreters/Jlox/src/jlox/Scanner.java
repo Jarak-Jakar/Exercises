@@ -175,33 +175,33 @@ class Scanner {
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
             case '/':
-
                 if (match('/')) {
                     // A line comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
                     }
                 } else if (match('*')) {
-                    // A block comment goes until it reaches a closing */, but we need to count newlines
-                    while (peek() != '*' && !isAtEnd()) {
+                    while (!(peek() == '*' && peekNext() == '/') && !isAtEnd()) {
+                        // A block comment goes until it reaches a closing */, but we need to count newlines
                         if (peek() == '\n') {
+                            System.out.println(line);
                             // Continue counting newlines.
                             line++;
                         }
                         advance();
                     }
-
                     if (isAtEnd()) {
                         Lox.error(line, "Unterminated block comment.");
                         return;
                     }
 
-
+                    // Effectively discard the closing comment
+                    advance();
+                    advance();
                 } else {
                     addToken(SLASH);
                 }
                 break;
-
             case ' ':
             case '\r':
             case '\t':
