@@ -15,11 +15,6 @@ public class LoxClass implements LoxCallable {
     }
 
     @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
     public int arity() {
         LoxFunction initializer = findMethod("init");
         if (initializer == null) {
@@ -49,5 +44,10 @@ public class LoxClass implements LoxCallable {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -53,14 +53,80 @@ class Scanner {
         return c >= '0' && c <= '9';
     }
 
-    List<Token> scanTokens() {
-        while (!isAtEnd()) {
-            start = current;
-            scanToken();
+    private void addToken(TokenType type) {
+        addToken(type, null);
+    }
+
+    private void addToken(TokenType type, Object literal) {
+        String text = source.substring(start, current);
+        tokens.add(new Token(type, text, literal, line));
+    }
+
+    private char advance() {
+        char c = source.charAt(current);
+        current++;
+        return c;
+    }
+
+    private void identifier() {
+        while (isAlphaNumeric(peek())) {
+            advance();
         }
 
-        tokens.add(new Token(EOF, "", null, line));
-        return tokens;
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if (type == null) {
+            type = IDENTIFIER;
+        }
+        addToken(type);
+    }
+
+    private boolean isAtEnd() {
+        return current >= source.length();
+    }
+
+    private boolean match(char expected) {
+        if (isAtEnd()) {
+            return false;
+        }
+        if (source.charAt(current) != expected) {
+            return false;
+        }
+
+        current++;
+        return true;
+    }
+
+    private void number() {
+        while (isDigit(peek())) {
+            advance();
+        }
+
+        // Look for a fractional part
+        if (peek() == '.' && isDigit(peekNext())) {
+            // Consume the "."
+            advance();
+
+            while (isDigit(peek())) {
+                advance();
+            }
+        }
+
+        addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+    }
+
+    private char peek() {
+        if (isAtEnd()) {
+            return '\0';
+        }
+        return source.charAt(current);
+    }
+
+    private char peekNext() {
+        if (current + 1 >= source.length()) {
+            return '\0';
+        }
+        return source.charAt(current + 1);
     }
 
     private void scanToken() {
@@ -109,12 +175,28 @@ class Scanner {
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
             case '/':
+
                 if (match('/')) {
-                    // A comment goes until the end of the line.
+                    // A line comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
                     }
-                    
+                } else if (match('*')) {
+                    // A block comment goes until it reaches a closing */, but we need to count newlines
+                    while (peek() != '*' && !isAtEnd()) {
+                        if (peek() == '\n') {
+                            // Continue counting newlines.
+                            line++;
+                        }
+                        advance();
+                    }
+
+                    if (isAtEnd()) {
+                        Lox.error(line, "Unterminated block comment.");
+                        return;
+                    }
+
+
                 } else {
                     addToken(SLASH);
                 }
@@ -152,42 +234,14 @@ class Scanner {
         }
     }
 
-    private void identifier() {
-        while (isAlphaNumeric(peek())) {
-            advance();
+    List<Token> scanTokens() {
+        while (!isAtEnd()) {
+            start = current;
+            scanToken();
         }
 
-        String text = source.substring(start, current);
-        TokenType type = keywords.get(text);
-        if (type == null) {
-            type = IDENTIFIER;
-        }
-        addToken(type);
-    }
-
-    private void number() {
-        while (isDigit(peek())) {
-            advance();
-        }
-
-        // Look for a fractional part
-        if (peek() == '.' && isDigit(peekNext())) {
-            // Consume the "."
-            advance();
-
-            while (isDigit(peek())) {
-                advance();
-            }
-        }
-
-        addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
-    }
-
-    private char peekNext() {
-        if (current + 1 >= source.length()) {
-            return '\0';
-        }
-        return source.charAt(current + 1);
+        tokens.add(new Token(EOF, "", null, line));
+        return tokens;
     }
 
     private void string() {
@@ -209,43 +263,5 @@ class Scanner {
         // Trim the surrounding quotes.
         String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
-    }
-
-    private char peek() {
-        if (isAtEnd()) {
-            return '\0';
-        }
-        return source.charAt(current);
-    }
-
-    private boolean match(char expected) {
-        if (isAtEnd()) {
-            return false;
-        }
-        if (source.charAt(current) != expected) {
-            return false;
-        }
-
-        current++;
-        return true;
-    }
-
-    private void addToken(TokenType type) {
-        addToken(type, null);
-    }
-
-    private void addToken(TokenType type, Object literal) {
-        String text = source.substring(start, current);
-        tokens.add(new Token(type, text, literal, line));
-    }
-
-    private char advance() {
-        char c = source.charAt(current);
-        current++;
-        return c;
-    }
-
-    private boolean isAtEnd() {
-        return current >= source.length();
     }
 }
