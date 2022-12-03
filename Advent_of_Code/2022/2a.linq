@@ -4,10 +4,7 @@ let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath)
 inputFilePath.Dump(nameof(inputFilePath))
 let inputLines = File.ReadAllLines(inputFilePath)
 
-type Move =
-    | Rock
-    | Paper
-    | Scissors
+type Move = | Rock | Paper | Scissors
     
 let parseMove = function
     | "A" | "X" -> Rock
@@ -16,15 +13,15 @@ let parseMove = function
     | _ -> failwith "Non-valid move char"
     
 let scoreMove = function
- | Rock -> 1
- | Paper -> 2
- | Scissors -> 3
+    | Rock -> 1
+    | Paper -> 2
+    | Scissors -> 3
     
 let scoreMatch opponent you =
     match opponent, you with
-    | Rock, Scissors | Paper, Rock | Scissors, Paper -> 0
-    | Rock, Rock | Paper, Paper | Scissors, Scissors -> 3
-    | Rock, Paper | Paper, Scissors | Scissors, Rock -> 6
+    | Rock, Scissors | Paper, Rock     | Scissors, Paper -> 0
+    | Rock, Rock     | Paper, Paper    | Scissors, Scissors -> 3
+    | Rock, Paper    | Paper, Scissors | Scissors, Rock -> 6
     
 let splitOnSpace (inps : string) = inps.Split(' ')
 
@@ -37,7 +34,6 @@ let scoreRound (round : Move array) =
 
 let score =
     inputLines
-    |> Array.map (splitOnSpace >> parseLine >> scoreRound)
-    |> Array.sum
+    |> Array.sumBy (splitOnSpace >> parseLine >> scoreRound)
     
 printfn "Total score is %d" score
