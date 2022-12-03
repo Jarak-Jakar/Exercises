@@ -1,31 +1,23 @@
-<Query Kind="FSharpProgram" />
+<Query Kind="FSharpProgram">
+  <NuGetReference>FSharpPlus</NuGetReference>
+  <Namespace>FSharpPlus</Namespace>
+</Query>
+
+open FSharpPlus
 
 let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "input_1.txt" |])
 inputFilePath.Dump(nameof(inputFilePath))
-let inputLines = File.ReadAllLines(inputFilePath) |> List.ofArray
+let inputLines = File.ReadAllLines(inputFilePath) |> Seq.ofArray
 //inputL.Dump(nameof(inputLines))
 
-let split input divider =
-    let rec splitHelper inp div outp =
-
-	    if List.isEmpty inp then
-            List.rev outp
-    	else
-	        let idx = List.tryFindIndex(fun l->l = div) inp
-	        match idx with
-	        | Some(i)->splitHelper(List.skip(i + 1) inp) div ((List.take i inp) :: outp)
-	        | None->List.rev(inp::outp)
-
-    splitHelper input divider List.Empty
-
-let splitted = split inputLines ""
+let splitted = Seq.split [ [ String.Empty ] ] inputLines
 //splitted.Dump(nameof(splitted))
 
 let answer = 
     splitted
-    |> List.map ((List.map int) >> List.sum)
-    |> List.sortDescending // This bit might be slow...
-    |> List.take 3
-    |> List.sum
+    |> Seq.map ((Seq.map int) >> Seq.sum)
+    |> Seq.sortDescending // This bit might be slow...  Could make it faster by tracking the three largest as we go
+    |> Seq.take 3
+    |> Seq.sum
           
 printfn "Sum of three greatest calories is %d" answer
