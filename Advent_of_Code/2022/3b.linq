@@ -15,9 +15,8 @@ let prioritise item =
     else
         pos
 
-//let summation = inputGroups |> Array.sumBy (intersect >> prioritise)
 let summation = inputLines 
-                |> Seq.map Set // works because strings are already regarded as collection in .NET (I think that's why)
+                |> Seq.map Set // works because strings are already regarded as collections in .NET (I think that's why)
                 |> Seq.chunkBySize 3
                 |> Seq.sumBy (Set.intersectMany >> Seq.head >> prioritise)
 

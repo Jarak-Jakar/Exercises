@@ -16,7 +16,7 @@ let splitted = Seq.split [ [ String.Empty ] ] inputLines
 let answer = 
     splitted
     |> Seq.map (Seq.sumBy int)
-    |> Seq.sortDescending // This bit will be slow...  Could make it faster by tracking the three largest as we go
+    |> Seq.sortDescending // This bit will be slow...  Could make it faster by tracking the three largest as we go instead
     |> Seq.take 3
     |> Seq.sum
           

@@ -10,7 +10,7 @@ let parseMove = function
     | "A" | "X" -> Rock
     | "B" | "Y" -> Paper
     | "C" | "Z" -> Scissors
-    | _ -> failwith "Non-valid move char"
+    | _ -> failwith "Invalid move char"
     
 let scoreMove = function
     | Rock -> 1
