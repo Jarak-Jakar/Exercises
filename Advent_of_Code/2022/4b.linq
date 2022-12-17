@@ -1,6 +1,6 @@
 <Query Kind="FSharpProgram" />
 
-let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "input_4.txt" |])
+let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "inputs"; "input_4.txt" |])
 let inputLines = File.ReadAllLines(inputFilePath)
 
 // This can definitely be done better, but I was not braining well at the time of solving it.

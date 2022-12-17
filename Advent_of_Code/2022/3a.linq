@@ -1,6 +1,6 @@
 <Query Kind="FSharpProgram" />
 
-let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "input_3.txt" |])
+let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "inputs"; "input_3.txt" |])
 let inputLines = File.ReadAllLines(inputFilePath)
 
 // There's almost certainly a better way to do this (without resorting to making assumptions about ASCII code points), but I can't think of it right now

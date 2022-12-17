@@ -5,7 +5,7 @@
 
 open FSharpPlus
 
-let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "input_1.txt" |])
+let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "inputs"; "input_1.txt" |])
 inputFilePath.Dump(nameof(inputFilePath))
 let inputLines = File.ReadAllLines(inputFilePath) |> Seq.ofArray
 
