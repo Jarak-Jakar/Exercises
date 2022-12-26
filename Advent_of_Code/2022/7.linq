@@ -18,7 +18,6 @@ let rec computeDirectorySize dir =
     subdirsSize + filesSize
     
 let root = { name = "root"; files = List.empty; parent = None; children = Map.empty }
-let mutable currDir = root
 
 let parseCd (cmd : string) =
     if cmd.EndsWith("..") then CdUp
@@ -30,17 +29,11 @@ let parseCd (cmd : string) =
 let parseLs arr =
     let listings = Array.takeWhile (fun (l : string) -> l.StartsWith("$") |> not) arr
     
-    //listings.Dump("listings")
-    
     let listingsLength = Array.length listings
-    
-    //listingsLength.Dump("listingsLength")
     
     (Ls listings, Array.skip listingsLength arr)
     
 let parseCommand (cmd : string) arr =
-    //cmd.Dump("parseCommand cmd")
-    //cmd[..3].Dump("chuckah")
     match cmd[..3] with
     | "$ cd" -> (parseCd cmd, arr)
     | "$ ls" -> parseLs arr
@@ -51,22 +44,41 @@ let parseCommands arr =
     let mutable remainingCmds = arr
     while Array.isEmpty remainingCmds |> not do
     
-        //remainingCmds.Dump("remainingCmds")
-    
         let nextCmd = Array.head remainingCmds
         
-        //nextCmd.Dump("nextCmd")
-        
         remainingCmds <- Array.tail remainingCmds
-        
-        //remainingCmds.Dump("remainingCmds2")
         
         let cmd, rest = parseCommand nextCmd remainingCmds
         cmds <- cmd :: cmds
         remainingCmds <- rest
-        //remainingCmds.Dump("remainingCmds3")
         
     List.rev cmds
     
 let cmds = parseCommands inputLines
-cmds.Dump("cmds")
+
+let processL currDir (l : string) = 
+    let split = l.Split()
+    if String.Equals(split[0], "dir") then
+        if currDir.children.ContainsKey split[1] |> not then
+            let newDir = { name = split[1]; files = List.empty; parent = Some(currDir); children = Map.empty }
+            currDir.children <- currDir.children.Add(split[1], newDir)
+    else
+        let newFile = { name = split[1]; size = split[0] |> int }
+        currDir.files <- newFile :: currDir.files
+
+let processLs ls currDir = 
+    Array.iter (processL currDir) ls    
+    currDir
+
+let processCmd cmd currDir =
+    match cmd with
+    | CdRoot -> root
+    | CdUp -> currDir.parent.Value // Assuming "cd .." won't be called at root
+    | CdDn d -> currDir.children[d]
+    | Ls ls -> processLs ls currDir
+
+root.Dump("root")
+
+//let result = processCmd (cmds |> List.tail |> List.head) root
+//
+//result.Dump("result")
