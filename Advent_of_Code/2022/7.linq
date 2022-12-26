@@ -90,5 +90,19 @@ let _ = List.fold foldFunc root cmds // The underscore is a clear sign I'm not d
 let maxSize = 100_000
 let filteredChildrenSize = sizeChoose maxSize root
 
-let result = filteredChildrenSize
-printfn "Total filtered size is %d" result
+let result1 = filteredChildrenSize
+printfn "Total filtered size is %d" result1
+
+let occupiedSpace = computeDirectorySize root
+let totalSpace = 70_000_000
+let requiredSpace = 30_000_000
+let freeSpace = totalSpace - occupiedSpace
+let minSpaceToFree = requiredSpace - freeSpace
+
+let rec sizeChoose2 minSize dir = 
+    let chosenChildSizes = Seq.collect (sizeChoose2 minSize) dir.children.Values
+    let size = computeDirectorySize dir
+    if size >= minSize then Seq.append chosenChildSizes (Seq.singleton size) else chosenChildSizes
+
+let result2 = sizeChoose2 minSpaceToFree root |> Seq.min
+printfn "Smallest sufficiently-large dir has size %d" result2
