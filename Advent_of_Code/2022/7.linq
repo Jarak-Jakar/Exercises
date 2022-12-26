@@ -1,6 +1,6 @@
 <Query Kind="FSharpProgram" />
 
-let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "inputs"; "example_7.txt" |])
+let inputFilePath = Path.Combine([| Path.GetDirectoryName(Util.CurrentQueryPath); "inputs"; "input_7.txt" |])
 let inputLines = File.ReadAllLines(inputFilePath)
 
 type File = { name: string; size: int }
@@ -16,15 +16,19 @@ let rec computeDirectorySize dir =
     let subdirsSize = Seq.sumBy computeDirectorySize (Map.values dir.children)
     let filesSize = List.sumBy (fun f -> f.size) dir.files
     subdirsSize + filesSize
-    
-let root = { name = "root"; files = List.empty; parent = None; children = Map.empty }
+
+let rec sizeChoose maxSize dir = 
+    let chosenChildSizes = Seq.map (sizeChoose maxSize) dir.children.Values
+    let totalChosenChildSizes = Seq.sum chosenChildSizes
+    let size = computeDirectorySize dir
+    totalChosenChildSizes + if size <= maxSize then size else 0
 
 let parseCd (cmd : string) =
-    if cmd.EndsWith("..") then CdUp
-    else if cmd.EndsWith("/") then CdRoot
+    if cmd.EndsWith("/") then CdRoot
+    else if cmd.EndsWith("..") then CdUp
     else
         let split = cmd.Split()
-        CdDn split[1]
+        CdDn split[2]
         
 let parseLs arr =
     let listings = Array.takeWhile (fun (l : string) -> l.StartsWith("$") |> not) arr
@@ -53,8 +57,6 @@ let parseCommands arr =
         remainingCmds <- rest
         
     List.rev cmds
-    
-let cmds = parseCommands inputLines
 
 let processL currDir (l : string) = 
     let split = l.Split()
@@ -70,15 +72,23 @@ let processLs ls currDir =
     Array.iter (processL currDir) ls    
     currDir
 
-let processCmd cmd currDir =
+let processCmd root currDir cmd =
     match cmd with
     | CdRoot -> root
-    | CdUp -> currDir.parent.Value // Assuming "cd .." won't be called at root
+    | CdUp -> currDir.parent.Value // I'm assuming "cd .." won't be called at root
     | CdDn d -> currDir.children[d]
     | Ls ls -> processLs ls currDir
+    
+let root = { name = "root"; files = List.empty; parent = None; children = Map.empty }
+    
+let cmds = parseCommands inputLines
 
-root.Dump("root")
+let foldFunc currDir cmd = 
+    processCmd root currDir cmd
 
-//let result = processCmd (cmds |> List.tail |> List.head) root
-//
-//result.Dump("result")
+let _ = List.fold foldFunc root cmds // The underscore is a clear sign I'm not doing it very 'functionally'...
+let maxSize = 100_000
+let filteredChildrenSize = sizeChoose maxSize root
+
+let result = filteredChildrenSize
+printfn "Total filtered size is %d" result
