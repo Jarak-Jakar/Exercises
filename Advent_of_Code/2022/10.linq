@@ -33,34 +33,46 @@ let processSteps register step =
     match step with
     | Noop -> register
     | Addx x -> register + x
+    
+let startingX = 1
+
+let processedSteps = 
+    instructions
+    |> Seq.collect makeStep
+    |> Seq.scan processSteps startingX
+    
+// Part One
 
 let computeSignalStrength (cycle, register) = cycle * register
 
 let indicesOfInterest = seq { 20; 60; 100; 140; 180; 220 }
-let startingX = 1
     
-//let steps = Seq.collect makeStep instructions    
-//let appliedSteps = Seq.scan processSteps startingX steps
-//let indexedSteps = Seq.indexed appliedSteps |> Seq.map (fun (i,v) -> (i + 1, v)) // Add 1 to each index
-//let interestingSteps = Seq.filter (fun (i, _) -> Seq.contains i indicesOfInterest) indexedSteps
-
-//let interestingSteps = 
-//    instructions
-//    |> Seq.collect makeStep
-//    |> Seq.scan processSteps startingX
-//    |> Seq.indexed
-//    |> Seq.map (fun (i,v) -> (i + 1, v)) // Use 1-based indexing
-//    |> Seq.filter (fun (i, _) -> Seq.contains i indicesOfInterest)
-
-let result = 
-    instructions
-    |> Seq.collect makeStep
-    |> Seq.scan processSteps startingX
+let result1 =
+    processedSteps
     |> Seq.indexed
     |> Seq.map (fun (i,v) -> (i + 1, v)) // Use 1-based indexing
     |> Seq.filter (fun (i, _) -> Seq.contains i indicesOfInterest)
     |> Seq.map computeSignalStrength 
     |> Seq.sum
 
-//let result = interestingSteps |> Seq.map computeSignalStrength |> Seq.sum
-printfn "The summed signal strength  is %d" result
+printfn "The summed signal strength  is %d" result1
+
+// Part Two
+
+let isCycleOnSprite (cycle, spritePos) =
+    cycle = spritePos - 1 || cycle = spritePos || cycle = spritePos + 1
+
+let draw = function
+    | true -> '#'
+    | false -> '.'
+
+let rows = Seq.chunkBySize 40 processedSteps
+
+let result2 =
+    rows
+    |> Seq.map Seq.indexed
+    |> Seq.map (Seq.map isCycleOnSprite)
+    |> Seq.map (Seq.map draw >> String.Concat)
+
+printfn "\n\nCRT Display:"
+Seq.iter (printfn "%s") result2
