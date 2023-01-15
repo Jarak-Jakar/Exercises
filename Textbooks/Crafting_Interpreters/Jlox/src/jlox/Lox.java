@@ -89,6 +89,8 @@ public enum Lox {
             return;
         }
 
+        RpnPrinter rpnPrinter = new RpnPrinter();
+
         interpreter.interpret(statements);
     }
 
