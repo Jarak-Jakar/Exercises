@@ -184,7 +184,7 @@ class Scanner {
                     while (!(peek() == '*' && peekNext() == '/') && !isAtEnd()) {
                         // A block comment goes until it reaches a closing */, but we need to count newlines
                         if (peek() == '\n') {
-                            System.out.println(line);
+//                            System.out.println(line);
                             // Continue counting newlines.
                             line++;
                         }

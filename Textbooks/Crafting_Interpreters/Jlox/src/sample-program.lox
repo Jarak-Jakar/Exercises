@@ -16,6 +16,6 @@ var result = 3 * 4;
 // print "Me too."; */
 
 
-print "I should be on line 19"
+print "I should be on line 19";
 
 print result;

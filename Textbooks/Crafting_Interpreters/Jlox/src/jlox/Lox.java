@@ -44,16 +44,17 @@ public enum Lox {
 
     private static void runPrompt() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
-        BufferedReader reader = new BufferedReader(input);
+        try (BufferedReader reader = new BufferedReader(input)) {
 
-        while (true) {
-            System.out.print("> ");
-            String line = reader.readLine();
-            if (line == null) {
-                break;
+            while (true) {
+                System.out.print("> ");
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                run(line);
+                hadError = false;
             }
-            run(line);
-            hadError = false;
         }
     }
 
@@ -90,6 +91,8 @@ public enum Lox {
         }
 
         RpnPrinter rpnPrinter = new RpnPrinter();
+        var exprs = statements.stream().filter(stmt -> stmt instanceof Stmt.Expression).map(stmt -> ((Stmt.Expression) stmt).expression);
+        exprs.forEach(expr -> System.out.println("Postfix notation: " + rpnPrinter.print(expr)));
 
         interpreter.interpret(statements);
     }
