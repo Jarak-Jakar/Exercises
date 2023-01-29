@@ -184,7 +184,6 @@ class Scanner {
                     while (!(peek() == '*' && peekNext() == '/') && !isAtEnd()) {
                         // A block comment goes until it reaches a closing */, but we need to count newlines
                         if (peek() == '\n') {
-//                            System.out.println(line);
                             // Continue counting newlines.
                             line++;
                         }
@@ -201,6 +200,15 @@ class Scanner {
                 } else {
                     addToken(SLASH);
                 }
+                break;
+            case '?':
+                addToken(CONDITIONAL_QUESTION);
+                // Ignore stuff until the colon
+                while (peek() != ':' && !isAtEnd()) {
+                    advance();
+                }
+                addToken(CONDITIONAL_COLON);
+                advance(); // Remove the colon from further consideration
                 break;
             case ' ':
             case '\r':

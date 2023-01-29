@@ -195,6 +195,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Object visitConditionalExpr(Expr.Conditional expr) {
+        Object condition = evaluate(expr.condition);
+        return (boolean) condition ? evaluate(expr.thenBranch) : evaluate(expr.elseBranch);
+    }
+
+    @Override
     public Object visitGetExpr(Expr.Get expr) {
         Object object = evaluate(expr.object);
         if (object instanceof LoxInstance) {

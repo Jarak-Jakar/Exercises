@@ -29,7 +29,7 @@ class Parser {
     }
 
     private Expr and() {
-        Expr expr = equality();
+        Expr expr = conditional();
 
         while (match(AND)) {
             Token operator = previous();
@@ -140,6 +140,19 @@ class Parser {
         return expr;
     }
 
+    private Expr conditional() {
+        Expr expr = equality();
+
+        if (match(CONDITIONAL_QUESTION)) {
+            Expr thenBranch = expression();
+            consume(CONDITIONAL_COLON, "Expect ':' after then branch of conditional operator");
+            Expr elseBranch = conditional();
+            expr = new Expr.Conditional(expr, thenBranch, elseBranch);
+        }
+
+        return expr;
+    }
+
     private Token consume(TokenType type, String message) {
         if (check(type)) {
             return advance();
@@ -208,7 +221,7 @@ class Parser {
                 if (arguments.size() >= MAX_PARAMETERS) {
                     error(peek(), "Can't have more than 255 arguments");
                 }
-                arguments.add(expression());
+                arguments.add(equality());
             } while (match(COMMA));
         }
 
