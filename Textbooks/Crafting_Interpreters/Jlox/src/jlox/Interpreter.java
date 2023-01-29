@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    private static final double MillisPerSecond = 1_000.0;
     private final Environment globals = new Environment();
     private final Map<Expr, Integer> locals = new HashMap<>();
     private Environment environment = globals;
@@ -19,7 +20,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
             @Override
             public Object call(Interpreter interpreter, List<Object> arguments) {
-                return System.currentTimeMillis() / 1_000.0;
+                return System.currentTimeMillis() / MillisPerSecond;
             }
 
             @Override
@@ -27,6 +28,58 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                 return "<native fn>";
             }
         });
+    }
+
+    private static void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) {
+            return;
+        }
+        throw new RuntimeError(operator, "Operand must be a number");
+    }
+
+    private static boolean isTruthy(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object instanceof Boolean) {
+            return (boolean) object;
+        }
+        return true;
+    }
+
+    private static void checkNumberOperands(Token operator, Object left, Object right) {
+        if (left instanceof Double && right instanceof Double) {
+            return;
+        }
+
+        throw new RuntimeError(operator, "Operands must be numbers.");
+    }
+
+    private static boolean isEqual(Object left, Object right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null) {
+            return false;
+        }
+
+        return left.equals(right);
+    }
+
+    private static String stringify(Object object) {
+        if (object == null) {
+            return "nil";
+        }
+
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
+
+        return object.toString();
     }
 
     void interpret(Iterable<? extends Stmt> statements) {
@@ -67,26 +120,33 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object right = evaluate(expr.right);
 
         switch (expr.operator.type) {
-            case GREATER:
+            case GREATER -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left > (double) right;
-            case GREATER_EQUAL:
+            }
+            case GREATER_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left >= (double) right;
-            case LESS:
+            }
+            case LESS -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left < (double) right;
-            case LESS_EQUAL:
+            }
+            case LESS_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left <= (double) right;
-            case BANG_EQUAL:
+            }
+            case BANG_EQUAL -> {
                 return !isEqual(left, right);
-            case EQUAL_EQUAL:
+            }
+            case EQUAL_EQUAL -> {
                 return isEqual(left, right);
-            case MINUS:
+            }
+            case MINUS -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left - (double) right;
-            case PLUS:
+            }
+            case PLUS -> {
                 if (left instanceof String && right instanceof String) {
                     return left + (String) right;
                 } else if (left instanceof String) {
@@ -95,14 +155,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                 if (left instanceof Double && right instanceof Double) {
                     return (double) left + (double) right;
                 }
-
                 throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings");
-            case SLASH:
+            }
+            case SLASH -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left / (double) right;
-            case STAR:
+            }
+            case STAR -> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double) left * (double) right;
+            }
+            case COMMA -> {
+                return right;
+            }
         }
 
         // Unreachable.
@@ -205,11 +270,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object right = evaluate(expr.right);
 
         switch (expr.operator.type) {
-            case BANG:
+            case BANG -> {
                 return !isTruthy(right);
-            case MINUS:
+            }
+            case MINUS -> {
                 checkNumberOperand(expr.operator, right);
                 return -(double) right;
+            }
         }
 
         // Unreachable.
@@ -221,13 +288,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return lookupVariable(expr.name, expr);
     }
 
-    private static void checkNumberOperand(Token operator, Object operand) {
-        if (operand instanceof Double) {
-            return;
-        }
-        throw new RuntimeError(operator, "Operand must be a number");
-    }
-
     private Object lookupVariable(Token name, Expr expr) {
         Integer distance = locals.get(expr);
         if (distance != null) {
@@ -235,51 +295,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         } else {
             return globals.get(name);
         }
-    }
-
-    private static boolean isTruthy(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (object instanceof Boolean) {
-            return (boolean) object;
-        }
-        return true;
-    }
-
-    private static void checkNumberOperands(Token operator, Object left, Object right) {
-        if (left instanceof Double && right instanceof Double) {
-            return;
-        }
-
-        throw new RuntimeError(operator, "Operands must be numbers.");
-    }
-
-    private static boolean isEqual(Object left, Object right) {
-        if (left == null && right == null) {
-            return true;
-        }
-        if (left == null) {
-            return false;
-        }
-
-        return left.equals(right);
-    }
-
-    private static String stringify(Object object) {
-        if (object == null) {
-            return "nil";
-        }
-
-        if (object instanceof Double) {
-            String text = object.toString();
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-            return text;
-        }
-
-        return object.toString();
     }
 
     private Object evaluate(Expr expr) {

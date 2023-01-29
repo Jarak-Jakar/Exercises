@@ -41,7 +41,7 @@ class Parser {
     }
 
     private Expr assignment() {
-        Expr expr = or();
+        Expr expr = comma();
 
         if (match(EQUAL)) {
             Token equals = previous();
@@ -114,6 +114,18 @@ class Parser {
         consume(RIGHT_BRACE, "Expect '}' after class body.");
 
         return new Stmt.Class(name, superclass, methods);
+    }
+
+    private Expr comma() {
+        Expr expr = or();
+
+        while (match(COMMA)) {
+            Token operator = previous();
+            Expr right = or();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr comparison() {
@@ -411,15 +423,9 @@ class Parser {
             }
 
             switch (peek().type) {
-                case CLASS:
-                case FUN:
-                case VAR:
-                case FOR:
-                case IF:
-                case WHILE:
-                case PRINT:
-                case RETURN:
+                case CLASS, FUN, VAR, FOR, IF, WHILE, PRINT, RETURN -> {
                     return;
+                }
             }
 
             advance();
