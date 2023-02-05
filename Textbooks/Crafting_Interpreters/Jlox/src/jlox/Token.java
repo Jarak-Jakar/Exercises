@@ -1,5 +1,5 @@
 //> Scanning token-class
-package com.craftinginterpreters.lox;
+package jlox;
 
 class Token {
   final TokenType type;
@@ -18,3 +18,4 @@ class Token {
     return type + " " + lexeme + " " + literal;
   }
 }
+

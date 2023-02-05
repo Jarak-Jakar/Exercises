@@ -1,5 +1,5 @@
 //> Scanning token-type
-package com.craftinginterpreters.lox;
+package jlox;
 
 enum TokenType {
   // Single-character tokens.
@@ -21,3 +21,4 @@ enum TokenType {
 
   EOF
 }
+

@@ -1,5 +1,5 @@
 //> Evaluating Expressions interpreter-class
-package com.craftinginterpreters.lox;
+package jlox;
 //> Statements and State import-list
 
 //> Functions import-array-list
@@ -534,3 +534,4 @@ class Interpreter implements Expr.Visitor<Object>,
   }
 //< stringify
 }
+

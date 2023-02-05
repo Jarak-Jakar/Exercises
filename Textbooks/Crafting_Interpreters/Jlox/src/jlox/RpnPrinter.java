@@ -35,11 +35,6 @@ public class RpnPrinter implements Expr.Visitor<String> {
     }
 
     @Override
-    public String visitConditionalExpr(Expr.Conditional expr) {
-        return String.format("%s %s ?: %s", evaluate(expr.elseBranch), evaluate(expr.thenBranch), evaluate(expr.condition));
-    }
-
-    @Override
     public String visitGetExpr(Expr.Get expr) {
         String name = expr.name.lexeme;
         String object = evaluate(expr.object);
@@ -98,3 +93,4 @@ public class RpnPrinter implements Expr.Visitor<String> {
         return expr.accept(this);
     }
 }
+

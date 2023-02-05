@@ -1,5 +1,5 @@
 //> Resolving and Binding resolver
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.HashMap;
 import java.util.List;
@@ -404,3 +404,4 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   }
 //< resolve-local
 }
+

@@ -1,5 +1,5 @@
 //> Representing Code ast-printer
-package com.craftinginterpreters.lox;
+package jlox;
 //> omit
 
 import java.util.List;
@@ -271,3 +271,4 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 */
 }
+

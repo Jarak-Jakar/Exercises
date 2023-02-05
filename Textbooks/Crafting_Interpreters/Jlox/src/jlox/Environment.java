@@ -1,5 +1,5 @@
 //> Statements and State environment-class
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,3 +89,4 @@ class Environment {
   }
 //< omit
 }
+

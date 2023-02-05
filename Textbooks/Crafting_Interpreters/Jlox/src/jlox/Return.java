@@ -1,5 +1,5 @@
 //> Functions return-exception
-package com.craftinginterpreters.lox;
+package jlox;
 
 class Return extends RuntimeException {
   final Object value;
@@ -9,3 +9,4 @@ class Return extends RuntimeException {
     this.value = value;
   }
 }
+

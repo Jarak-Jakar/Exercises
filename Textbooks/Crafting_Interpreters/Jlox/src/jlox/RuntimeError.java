@@ -1,5 +1,5 @@
 //> Evaluating Expressions runtime-error-class
-package com.craftinginterpreters.lox;
+package jlox;
 
 class RuntimeError extends RuntimeException {
   final Token token;
@@ -9,3 +9,4 @@ class RuntimeError extends RuntimeException {
     this.token = token;
   }
 }
+

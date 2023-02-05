@@ -1,5 +1,5 @@
 //> Classes lox-instance
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,3 +44,4 @@ class LoxInstance {
     return klass.name + " instance";
   }
 }
+

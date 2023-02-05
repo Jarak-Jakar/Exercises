@@ -1,5 +1,5 @@
 //> Appendix II expr
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.List;
 
@@ -216,3 +216,4 @@ abstract class Expr {
   abstract <R> R accept(Visitor<R> visitor);
 }
 //< Appendix II expr
+

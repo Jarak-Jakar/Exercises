@@ -1,5 +1,5 @@
 //> Parsing Expressions parser
-package com.craftinginterpreters.lox;
+package jlox;
 
 //> Statements and State parser-imports
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Arrays;
 //< Control Flow import-arrays
 import java.util.List;
 
-import static com.craftinginterpreters.lox.TokenType.*;
+import static jlox.TokenType.*;
 
 class Parser {
 //> parse-error
@@ -566,3 +566,4 @@ class Parser {
   }
 //< synchronize
 }
+

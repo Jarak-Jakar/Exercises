@@ -1,5 +1,5 @@
 //> Functions callable
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.List;
 
@@ -9,3 +9,4 @@ interface LoxCallable {
 //< callable-arity
   Object call(Interpreter interpreter, List<Object> arguments);
 }
+

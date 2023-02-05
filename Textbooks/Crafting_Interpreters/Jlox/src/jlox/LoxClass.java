@@ -1,5 +1,5 @@
 //> Classes lox-class
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.List;
 import java.util.Map;
@@ -83,3 +83,4 @@ class LoxClass implements LoxCallable {
   }
 //< lox-class-call-arity
 }
+

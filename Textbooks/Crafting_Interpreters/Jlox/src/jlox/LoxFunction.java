@@ -1,5 +1,5 @@
 //> Functions lox-function
-package com.craftinginterpreters.lox;
+package jlox;
 
 import java.util.List;
 
@@ -89,3 +89,4 @@ class LoxFunction implements LoxCallable {
   }
 //< function-call
 }
+
