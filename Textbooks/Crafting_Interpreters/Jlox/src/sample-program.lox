@@ -6,9 +6,9 @@ sayHi("Dear", "Reader");
 
 var result = 3 * 4;
 
-///* print "I should be commented out."; // print "Me too."; */ print "But not me!";
+/* print "I should be commented out."; // print "Me too."; */ print "But not me!";
 
-///* print "I should be commented out.";
+/* print "I should be commented out.";
 
 3;
 

@@ -131,6 +131,17 @@ class Scanner {
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
                     }
+                } else if (match('*')) {
+                    while (peek() != '*' || peekNext() != '/' && !isAtEnd()) {
+                        if (peek() == '\n') {
+                            line++; // continue counting new lines
+                        }
+                        advance();
+                    }
+
+                    // Once we have found the comment close, discard those characters
+                    advance();
+                    advance();
                 } else {
                     addToken(SLASH);
                 }
