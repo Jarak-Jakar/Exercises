@@ -20,4 +20,4 @@ print "I should be on line 19";
 
 print result;
 
-/* this should be a nested block comment */ print "but we'll see" */
+/* this should be /* a nested block comment */ print "but we'll see" */
