@@ -13,3 +13,5 @@ To execute a test program, `cd` into the `src` directory, and execute
 ```powershell
 java -classpath "..\out\production\jlox" jlox.Lox sample-program.lox
 ```
+
+Chop off the `sample-program.lox` bit at the end to run the REPL.

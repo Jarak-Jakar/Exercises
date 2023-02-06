@@ -394,8 +394,8 @@ class Interpreter implements Expr.Visitor<Object>,
                 if (left instanceof Double && right instanceof Double) {
                     return (double) left + (double) right;
                 } // [plus]
-                if (left instanceof String && right instanceof String) {
-                    return left + (String) right;
+                if (left instanceof String) {
+                    return left + stringify(right);
                 }
 
 /* Evaluating Expressions binary-plus < Evaluating Expressions string-wrong-type

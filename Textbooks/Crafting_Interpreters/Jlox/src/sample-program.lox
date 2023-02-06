@@ -21,3 +21,9 @@ print "I should be on line 19";
 print result;
 
 /* this should be /* a nested block comment */ print "but we'll see" */
+
+var i = 1;
+while(i <= 5) {
+	print "Mambo #" + i;
+	i = i + 1;
+}
