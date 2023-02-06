@@ -27,3 +27,13 @@ while(i <= 5) {
 	print "Mambo #" + i;
 	i = i + 1;
 }
+
+//i > 1 ? print "Left" : print "Right";
+//i > 10 ? print "Port" : print "Starboard";
+
+var j = 0;
+j = i > 1 ? 1 : 2;
+print j;
+
+j = i > 10 ? 3 : 4;
+print j;

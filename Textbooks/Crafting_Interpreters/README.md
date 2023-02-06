@@ -11,19 +11,23 @@ My answers/solutions to the challenges presented at the end of each chapter of *
 
 ## Development Environments & Editors
 
-I use Windows for my day-to-day computating, which sometimes necessitates using things like containers (e.g. Docker) or virtual machines, either directly through something like Virtualbox, or indirectly through something like Vagrant.
+I use Windows for my day-to-day computating, which sometimes necessitates using things like containers (e.g. Docker) or virtual machines, either directly through something like Virtualbox, or indirectly through something like Vagrant.  This is partly because some things aren't provided for Windows, and partly in the interests of future reproducibility.
 
 ### Java
 
 #### Environment
 
-I looked around at a few options for this, but ulitmately found that most of them were more hassle than they were worth.  Turns out that installing Java into a Linux VM is much more complicated than it seems like it shoudl be ...  In the end, I just installed a version of the JDK directly into Windows.  Specifically, the printout from running `java --version` gave the following output:
+I looked around at a few options for this, but ulitmately found that most of them were more hassle than they were worth.  Turns out that installing Java into a Linux VM is much more complicated than it seems like it should be...  In the end, I just installed a version of the JDK directly into Windows.  Specifically, the printout from running `java --version` gave the following output:
 
 ```bash
 openjdk 17.0.5 2022-10-18
 OpenJDK Runtime Environment Temurin-17.0.5+8 (build 17.0.5+8)
 OpenJDK 64-Bit Server VM Temurin-17.0.5+8 (build 17.0.5+8, mixed mode, sharing)
 ```
+
+##### Compiler options
+
+I didn't set any extra/specific compiler options myself.  I just used whatever it was that was set up in IntelliJ, and then ran its built-in 'build project' type feature.
 
 #### Editor
 
@@ -33,7 +37,7 @@ JetBrains IntelliJ Community Edition.  I started with the Ultimate edition at fi
 
 #### Environment
 
-I simply used the latest version of GCC available in my chosen [WSL distribution](https://learn.microsoft.com/en-nz/windows/wsl/about).  There wasn't really any point in fussing around with something more advanced or complicated for relatively simple C programming.  In my case, I have been using the OpenSUSE Tumbleweed distro, but I don't think there's any terribly significant differences between most WSL for these purposes.
+I simply used the latest version of GCC available in my chosen [WSL distribution](https://learn.microsoft.com/en-nz/windows/wsl/about).  There wasn't really any point in fussing around with something more advanced or complicated for relatively simple C programming, and I don't *think* any of this stuff will stop working in the near-term future.  In my case, I have been using the OpenSUSE Tumbleweed distro, but I don't think there's any terribly significant differences between most WSL implementations for these purposes.
 
 #### Editor
 
@@ -42,3 +46,11 @@ I used Visual Studio Code with the C/C++ extension published by Microsoft.
 ## Future Efforts?
 
 I *might* come back in the future and make my own re-implementations of a Lox interpreter in other languages that interest me.  Especially if they claim to be a systems programming language (e.g. Rust, Zig, D, Red, Carbon to name some relatively current ones).
+
+## List of potential Lox improvements
+
+This is an unsorted list of ideas of things I *could* (not necessarily ever will) implement to improve upon Lox the language as it currently is:
+
+- Add string interpolation
+- Add `for` loops
+- Add in some capacity to use features, and more importantly the standard library, of the host language

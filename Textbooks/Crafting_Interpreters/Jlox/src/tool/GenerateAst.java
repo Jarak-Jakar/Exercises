@@ -6,11 +6,14 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public enum GenerateAst {
-  ;
+    ;
 
-  public static void main(String[] args) throws IOException {
+    private static final Pattern COMPILE = Pattern.compile(", ");
+
+    public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.err.println("Usage: generate_ast <output directory>");
             System.exit(64);
@@ -25,6 +28,7 @@ public enum GenerateAst {
 //> Functions call-expr
                 "Call     : Expr callee, Token paren, List<Expr> arguments",
 //< Functions call-expr
+                "Conditional : Expr condition, Expr thenBranch, Expr elseBranch",
 //> Classes get-ast
                 "Get      : Expr object, Token name",
 //< Classes get-ast
@@ -103,7 +107,7 @@ public enum GenerateAst {
 //> omit
         writer.println("//> Appendix II " + baseName.toLowerCase());
 //< omit
-        writer.println("package com.craftinginterpreters.lox;");
+        writer.println("package jlox;");
         writer.println();
         writer.println("import java.util.List;");
         writer.println();
@@ -142,7 +146,7 @@ public enum GenerateAst {
     //< define-ast
 //> define-visitor
     private static void defineVisitor(
-            PrintWriter writer, String baseName, List<String> types) {
+            PrintWriter writer, String baseName, Iterable<String> types) {
         writer.println("  interface Visitor<R> {");
 
         for (String type : types) {
@@ -181,7 +185,7 @@ public enum GenerateAst {
         fieldList = fieldList.replace(",\n          ", ", ");
 //< omit
         // Store parameters in fields.
-        String[] fields = fieldList.split(", ");
+        String[] fields = COMPILE.split(fieldList);
         for (String field : fields) {
             String name = field.split(" ")[1];
             writer.println("      this." + name + " = " + name + ";");

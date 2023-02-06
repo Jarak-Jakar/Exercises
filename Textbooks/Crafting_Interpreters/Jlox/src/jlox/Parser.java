@@ -57,7 +57,7 @@ class Parser {
     return equality();
 */
 //> Statements and State expression
-        return assignment();
+        return conditional();
 //< Statements and State expression
     }
 
@@ -492,6 +492,19 @@ class Parser {
             } else {
                 break;
             }
+        }
+
+        return expr;
+    }
+
+    private Expr conditional() {
+        Expr expr = assignment();
+
+        if (match(CONDITIONAL_QUESTION)) {
+            Expr thenBranch = expression();
+            consume(CONDITIONAL_COLON, "Expect : after the 'then' branch of a conditional expression.");
+            Expr elseBranch = expression();
+            expr = new Expr.Conditional(expr, thenBranch, elseBranch);
         }
 
         return expr;

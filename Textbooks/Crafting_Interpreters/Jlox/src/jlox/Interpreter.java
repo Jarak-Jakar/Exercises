@@ -454,6 +454,15 @@ class Interpreter implements Expr.Visitor<Object>,
         return function.call(this, arguments);
     }
 
+    @Override
+    public Object visitConditionalExpr(Expr.Conditional expr) {
+        Object outcome = evaluate(expr.condition);
+        /*if (!(outcome instanceof Boolean)) {
+            throw new RuntimeError(, "The conditional's condition did not evaluate to a boolean");
+        }*/
+        return (boolean) outcome ? evaluate(expr.thenBranch) : evaluate(expr.elseBranch);
+    }
+
     //< Functions visit-call
 //> Classes interpreter-visit-get
     @Override

@@ -109,7 +109,14 @@ class Scanner {
                 break;
             case '*':
                 addToken(STAR);
-                break; // [slash]
+                break;
+            // To the best of my knowledge, neither ? or : is currently used otherwise in Lox
+            case '?':
+                addToken(CONDITIONAL_QUESTION);
+                break;
+            case ':':
+                addToken(CONDITIONAL_COLON);
+                break;
 //> two-char-tokens
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
@@ -123,7 +130,6 @@ class Scanner {
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
                 break;
-//< two-char-tokens
 //> slash
             case '/':
                 if (match('/')) {
