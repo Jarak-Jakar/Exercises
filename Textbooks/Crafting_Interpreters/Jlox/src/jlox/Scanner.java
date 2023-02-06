@@ -132,16 +132,32 @@ class Scanner {
                         advance();
                     }
                 } else if (match('*')) {
-                    while (peek() != '*' || peekNext() != '/' && !isAtEnd()) {
-                        if (peek() == '\n') {
-                            line++; // continue counting new lines
+                    int openBlockComments = 1;
+                    char next;
+                    char nextNext;
+
+                    while (openBlockComments > 0 && !isAtEnd()) {
+                        next = peek();
+                        nextNext = peekNext();
+
+                        if (next == '/' && nextNext == '*') {
+                            openBlockComments++;
+                        } else if (next == '*' && nextNext == '/') {
+                            openBlockComments--;
+                        } else if (next == '\n') {
+                            line++;
                         }
+
                         advance();
                     }
 
                     // Once we have found the comment close, discard those characters
                     advance();
-                    advance();
+                    // Avoid an error if a block comment close ends the file.
+                    // I'm sure there's a tidier way to do this, though.
+                    if (!isAtEnd()) {
+                        advance();
+                    }
                 } else {
                     addToken(SLASH);
                 }
