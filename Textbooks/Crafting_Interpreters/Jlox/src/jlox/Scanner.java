@@ -132,30 +132,23 @@ class Scanner {
                         advance();
                     }
                 } else if (match('*')) {
-                    int openBlockComments = 1;
-                    char next;
-                    char nextNext;
+                    int nestingLevel = 1;
 
-                    while (openBlockComments > 0 && !isAtEnd()) {
-                        next = peek();
-                        nextNext = peekNext();
-
-                        if (next == '/' && nextNext == '*') {
-                            openBlockComments++;
-                        } else if (next == '*' && nextNext == '/') {
-                            openBlockComments--;
-                        } else if (next == '\n') {
-                            line++;
+                    while (nestingLevel > 0) {
+                        if (isAtEnd()) {
+                            Lox.error(line, "Unterminated block comment");
+                            break;
                         }
 
-                        advance();
-                    }
-
-                    // Once we have found the comment close, discard those characters
-                    advance();
-                    // Avoid an error if a block comment close ends the file.
-                    // I'm sure there's a tidier way to do this, though.
-                    if (!isAtEnd()) {
+                        if (peek() == '/' && peekNext() == '*') {
+                            nestingLevel++;
+                            advance();
+                        } else if (peek() == '*' && peekNext() == '/') {
+                            nestingLevel--;
+                            advance();
+                        } else if (peek() == '\n') {
+                            line++;
+                        }
                         advance();
                     }
                 } else {
