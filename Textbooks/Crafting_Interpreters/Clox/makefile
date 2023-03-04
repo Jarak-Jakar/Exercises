@@ -20,4 +20,3 @@ clox: $(OBJ)
 
 clean:
 	rm -f $(ODIR)/*.o
-	rm clox
