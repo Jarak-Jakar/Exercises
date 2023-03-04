@@ -503,7 +503,7 @@ class Parser {
         if (match(CONDITIONAL_QUESTION)) {
             Expr thenBranch = expression();
             consume(CONDITIONAL_COLON, "Expect : after the 'then' branch of a conditional expression.");
-            Expr elseBranch = expression();
+            Expr elseBranch = conditional();
             expr = new Expr.Conditional(expr, thenBranch, elseBranch);
         }
 

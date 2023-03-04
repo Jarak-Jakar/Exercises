@@ -4,23 +4,12 @@ fun sayHi(first, last) {
 
 sayHi("Dear", "Reader");
 
-var result = 3 * 4;
-
-/* print "I should be commented out."; // print "Me too."; */ print "But not me!";
-
-/* print "I should be commented out.";
-
-3;
+var result = 3 * 4; print "But not me!";
 
 
-// print "Me too."; */
-
-
-print "I should be on line 19";
+print "I should be on line 10";
 
 print result;
-
-/* this should be /* a nested block comment */ print "but we'll see" */
 
 var i = 1;
 while(i <= 5) {
@@ -30,6 +19,14 @@ while(i <= 5) {
 
 //i > 1 ? print "Left" : print "Right";
 //i > 10 ? print "Port" : print "Starboard";
+
+var t = 0;
+
+t = i > 1 ? 1 : 2;
+t = i > 10 ? 3 : 4;
+
+print "t";
+print t;
 
 var j = 0;
 j = i > 1 ? 1 : 2;

@@ -16,6 +16,7 @@ class Interpreter implements Expr.Visitor<Object> {
 //> Statements and State interpreter
 class Interpreter implements Expr.Visitor<Object>,
         Stmt.Visitor<Void> {
+    private static final double MILLI = 1000.0;
     //< Statements and State interpreter
 /* Statements and State environment-field < Functions global-environment
   private Environment environment = new Environment();
@@ -41,7 +42,7 @@ class Interpreter implements Expr.Visitor<Object>,
             @Override
             public Object call(Interpreter interpreter,
                                List<Object> arguments) {
-                return System.currentTimeMillis() / 1000.0;
+                return System.currentTimeMillis() / MILLI;
             }
 
             @Override

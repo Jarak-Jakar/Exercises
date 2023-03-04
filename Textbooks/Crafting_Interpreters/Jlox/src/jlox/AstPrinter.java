@@ -265,7 +265,7 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
             } else if (part instanceof Token) {
                 builder.append(((Token) part).lexeme);
             } else if (part instanceof List) {
-                transform(builder, ((Collection) part).toArray());
+                transform(builder, ((Collection<?>) part).toArray());
             } else {
                 builder.append(part);
             }
