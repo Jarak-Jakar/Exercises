@@ -34,8 +34,6 @@ void writeChunk(Chunk *chunk, uint8_t byte, int line)
     chunk->code[chunk->count] = byte;
     chunk->count++;
 
-    printf("Luke\n");
-
     // Line counting
     // If we're still on the same line, we don't need to do anything
     if (chunk->lineCount > 0 && line == chunk->lines[chunk->lineCount - 1].line)
@@ -43,25 +41,18 @@ void writeChunk(Chunk *chunk, uint8_t byte, int line)
         return;
     }
 
-    printf("Leia\n");
-
     // If we're not still on the same line, we're about to add a new LineStart, so we need to ensure the relevant array has sufficient capacity
     if (chunk->lineCapacity < chunk->lineCount + 1)
     {
-        printf("Jabba\n");
         int oldCapacity = chunk->lineCapacity;
         chunk->lineCapacity = GROW_CAPACITY(oldCapacity);
         chunk->lines = GROW_ARRAY(LineStart, chunk->lines, oldCapacity, chunk->lineCapacity);
     }
 
-    printf("Han\n");
-
     LineStart *newLS = &chunk->lines[chunk->lineCount++];
     newLS->line = line;
     // The chunk count, less one, corresponds to the starting offset, I THINK
     newLS->offset = chunk->count - 1;
-
-    printf("Obi-wan\n");
 }
 
 int addConstant(Chunk *chunk, Value value)
