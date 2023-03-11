@@ -73,18 +73,24 @@ int addConstant(Chunk *chunk, Value value)
 // This function implicitly assumes that you'll never pass it an offset that wouldn't already have been stored...
 int getLine(Chunk *chunk, int instruction)
 {
-    LineStart *LineStart = chunk->lines;
-    int startOff = 0;
+    int start = 0;
+    int end = chunk->lineCount - 1;
 
-    // printf("Yoda\n");
-
-    // Seek the first line with a start offset greater than or equal to the one we're looking for
-    while (instruction < chunk->lines[startOff].offset)
+    for (;;)
     {
-        startOff++;
+        int mid = (start + end) / 2;
+        LineStart *line = &chunk->lines[mid];
+        if (instruction < line->offset)
+        {
+            end = mid - 1;
+        }
+        else if (mid == chunk->lineCount - 1 || instruction < chunk->lines[mid + 1].offset)
+        {
+            return line->line;
+        }
+        else
+        {
+            start = mid + 1;
+        }
     }
-
-    // printf("Palpatine\n");
-
-    return chunk->lines[startOff].line;
 }
