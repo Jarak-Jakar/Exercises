@@ -12,18 +12,18 @@ typedef enum
 
 typedef struct
 {
-    int lineNumber;
-    int startingOffset;
-} LineStarts;
+    int line;
+    int offset;
+} LineStart;
 
 typedef struct
 {
     int count;
     int capacity;
     uint8_t *code;
-    LineStarts *lines;
-    int lineStartCount;
-    int lineStartCapacity;
+    LineStart *lines;
+    int lineCount;
+    int lineCapacity;
     ValueArray constants;
 } Chunk;
 
@@ -32,6 +32,6 @@ void freeChunk(Chunk *chunk);
 void writeChunk(Chunk *chunk, uint8_t byte, int line);
 int addConstant(Chunk *chunk, Value value);
 
-int getLine(Chunk *chunk, int offset);
+int getLine(Chunk *chunk, int instruction);
 
 #endif
