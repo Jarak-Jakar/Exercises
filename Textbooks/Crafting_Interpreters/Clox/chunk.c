@@ -61,6 +61,10 @@ int addConstant(Chunk *chunk, Value value)
     return chunk->constants.count - 1;
 }
 
+void writeConstant(Chunk *chunk, Value value, int line)
+{
+}
+
 // This function implicitly assumes that you'll never pass it an offset that wouldn't already have been stored...
 int getLine(Chunk *chunk, int instruction)
 {
