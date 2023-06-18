@@ -3,11 +3,11 @@
 
 CC=gcc
 CFLAGS=
-DEPS = chunk.h memory.h debug.h value.h
+DEPS = chunk.h memory.h debug.h value.h vm.h
 
 ODIR=obj
 
-_OBJ = chunk.o memory.o debug.o value.o main.o
+_OBJ = chunk.o memory.o debug.o value.o vm.o main.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 .PHONY: clean
