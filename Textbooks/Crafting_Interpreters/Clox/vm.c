@@ -9,14 +9,16 @@ VM vm;
 
 static void resetStack()
 {
-    vm.stackTop = vm.stack;
     vm.stackCount = 0;
     vm.stack = GROW_ARRAY(Value, vm.stack, vm.stackCapacity, STACK_MAX);
     vm.stackCapacity = STACK_MAX;
+    vm.stackTop = vm.stack;
 }
 
 void initVM()
 {
+    vm.stackCapacity = 0;
+    vm.stack = NULL;
     resetStack();
 }
 
@@ -28,7 +30,7 @@ void push(Value value)
 {
     if (vm.stackCapacity < vm.stackCount + 1)
     {
-        size_t oldSize = vm.stackCapacity;
+        size_t oldCapacity = vm.stackCapacity;
         vm.stackCapacity = GROW_CAPACITY(vm.stackCapacity);
         vm.stack = GROW_ARRAY(Value, vm.stack, vm.stackCapacity, STACK_MAX);
     }
