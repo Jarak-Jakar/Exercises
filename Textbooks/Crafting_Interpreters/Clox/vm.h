@@ -12,6 +12,8 @@ typedef struct
     uint8_t *ip;
     Value stack[STACK_MAX];
     Value *stackTop;
+    size_t stackCount;
+    size_t stackCapacity;
 } VM;
 
 typedef enum

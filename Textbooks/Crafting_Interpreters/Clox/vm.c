@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "debug.h"
+#include "memory.h"
 #include "vm.h"
 
 VM vm;
@@ -9,6 +10,9 @@ VM vm;
 static void resetStack()
 {
     vm.stackTop = vm.stack;
+    vm.stackCount = 0;
+    vm.stack = GROW_ARRAY(Value, vm.stack, vm.stackCapacity, STACK_MAX);
+    vm.stackCapacity = STACK_MAX;
 }
 
 void initVM()
@@ -22,12 +26,21 @@ void freeVM()
 
 void push(Value value)
 {
+    if (vm.stackCapacity < vm.stackCount + 1)
+    {
+        size_t oldSize = vm.stackCapacity;
+        vm.stackCapacity = GROW_CAPACITY(vm.stackCapacity);
+        vm.stack = GROW_ARRAY(Value, vm.stack, vm.stackCapacity, STACK_MAX);
+    }
+
     *vm.stackTop = value;
     vm.stackTop++;
+    vm.stackCount++;
 }
 
 Value pop()
 {
+    vm.stackCount--;
     vm.stackTop--;
     return *vm.stackTop;
 }

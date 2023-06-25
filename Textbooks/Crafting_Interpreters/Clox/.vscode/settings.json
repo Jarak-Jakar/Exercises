@@ -2,7 +2,10 @@
     "files.associations": {
         "memory.h": "c",
         "debug.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "value.h": "c",
+        "chunk.h": "c",
+        "vm.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
