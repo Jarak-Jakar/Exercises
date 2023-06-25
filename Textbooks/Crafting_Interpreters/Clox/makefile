@@ -16,7 +16,7 @@ $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clox: $(OBJ)
-	$(CC) -o $@ $^ -Wall -std=c17
+	$(CC) -o $@ $^ -Wall -Werror -std=c17
 
 clean:
 	rm -f $(ODIR)/*.o
